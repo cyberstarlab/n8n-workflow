@@ -1,0 +1,154 @@
+{
+  "name": "EP13_sub取得上市收盤數據",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -32
+      ],
+      "id": "1aabb77b-c1cb-44fe-be18-b5cfb2d5bd37",
+      "name": "解析CSV 檔"
+    },
+    {
+      "parameters": {
+        "url": "https://www.twse.com.tw/exchangeReport/STOCK_DAY_ALL",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "response",
+              "value": "open_data"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        16,
+        -32
+      ],
+      "id": "a0e6cb7e-1bf3-4b07-b2a0-38560b9505b6",
+      "name": "取得台灣上市公司收盤資料"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "company_name",
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -176,
+        -32
+      ],
+      "id": "4096605e-b99d-4a11-afb2-022eccb5567d",
+      "name": "當被其他流程呼叫時"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5c3948d1-6403-44b9-82bd-2f3e497a64ac",
+              "leftValue": "={{ $('當被其他流程呼叫時').item.json.company_name }}",
+              "rightValue": "={{ $json[\"證券名稱\"] }}",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        -32
+      ],
+      "id": "aa29f96e-e177-4f4a-87c6-c539648e1d4f",
+      "name": "Filter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "取得台灣上市公司收盤資料": {
+      "main": [
+        [
+          {
+            "node": "解析CSV 檔",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "當被其他流程呼叫時": {
+      "main": [
+        [
+          {
+            "node": "取得台灣上市公司收盤資料",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "解析CSV 檔": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "851e8ce4-0225-4e6a-b7e0-ab822858bf2d",
+  "meta": {
+    "instanceId": "5319f7ddebad67a3109b936b147dba84cc88bfa9470d2304e4761e96f82a7c70"
+  },
+  "id": "9Ap5BeBTe5jTMXWe",
+  "tags": [
+    {
+      "createdAt": "2025-04-20T10:59:38.671Z",
+      "updatedAt": "2025-04-20T12:13:53.692Z",
+      "id": "L8xfvM2kTOCMtEXi",
+      "name": "完成"
+    }
+  ]
+}
