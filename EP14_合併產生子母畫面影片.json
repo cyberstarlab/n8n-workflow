@@ -1,0 +1,557 @@
+{
+  "name": "合併產生子母畫面影片_v3",
+  "nodes": [
+    {
+      "parameters": {
+        "command": "=ffmpeg -y -i {{ $('整理檔案路徑').item.json.root_path }}/output/merge_temp.mp4 -vn -acodec  libmp3lame -q:a 2 {{ $('整理檔案路徑').item.json.root_path }}/output/audio.mp3"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        720,
+        912
+      ],
+      "id": "f4aa2de9-ce17-43a0-90cf-42c24d456fa7",
+      "name": "拆分音訊檔",
+      "notes": "參數說明：\n\"-y\"，直接同意執行這個指令，不需要人為確認，\n因為流程執行中沒有可以輸入確認的地方，如果沒有設定的話會一直卡在這個步驟"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7b4c4c7f-039b-4d94-8c08-7bbdb7a312c9",
+              "name": "root_path",
+              "value": "C:/n8n/母子畫面流程",
+              "type": "string"
+            },
+            {
+              "id": "4e617d30-a6e4-4d04-9618-50d2f71b4b34",
+              "name": "main_video",
+              "value": "video_v1.mp4",
+              "type": "string"
+            },
+            {
+              "id": "a1bf6e69-b01e-4e33-836a-4d504a707258",
+              "name": "sub_video",
+              "value": "video2.mp4",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        608
+      ],
+      "id": "2098784a-2add-4f7f-ae5d-b05acea0dfde",
+      "name": "整理檔案路徑",
+      "notes": "Window系統路徑設定：\n為了與mac系統相容，後續指令會使用powershell執行，路徑部分使用\"/\"而非\"\\\"\nC:/path/to/file\n\nMac系統路徑設定:\n/Users/path/to/file\n"
+    },
+    {
+      "parameters": {
+        "content": "## 拆分音檔",
+        "height": 272,
+        "width": 496,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        816
+      ],
+      "typeVersion": 1,
+      "id": "c07467f8-9857-4272-8028-95562788e312",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## 設定路徑",
+        "height": 272,
+        "width": 464,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        512
+      ],
+      "typeVersion": 1,
+      "id": "5eb1ecb1-ce7d-4594-a3cc-9a46b41d2ee8",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $('整理檔案路徑').item.json.root_path }}/output/audio.mp3",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        944,
+        912
+      ],
+      "id": "0c788fa7-596a-4b3c-b581-8f81d2af7fda",
+      "name": "讀取拆分出來的音訊檔"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "whisper-1"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "response_format",
+              "value": "srt"
+            },
+            {
+              "name": "prompt",
+              "value": "使用繁體中文"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1248,
+        912
+      ],
+      "id": "d9efcdd8-6912-4269-a8df-5cd54be627f9",
+      "name": "產生SRT字幕檔",
+      "credentials": {
+        "openAiApi": {
+          "id": "o4p7jK45FkkueVdI",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "data",
+        "options": {
+          "fileName": "=subtitle.srt"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        912
+      ],
+      "id": "bfd02206-551e-448d-a0cc-87df41a5ed1b",
+      "name": "Convert to Text"
+    },
+    {
+      "parameters": {
+        "content": "## 生成SRT檔",
+        "height": 272,
+        "width": 704,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1168,
+        816
+      ],
+      "typeVersion": 1,
+      "id": "968a94a4-6006-47c3-863e-06bcef64feeb",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $('整理檔案路徑').item.json.root_path }}/output/subtitle.srt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        912
+      ],
+      "id": "6f880fc5-105c-48aa-a517-37ad4e4318c4",
+      "name": "字幕檔儲存"
+    },
+    {
+      "parameters": {
+        "command": "=ffmpeg -y -i {{ $('整理檔案路徑').item.json.root_path }}/output/merge_temp.mp4 -i {{ $('整理檔案路徑').item.json.root_path }}/output/subtitle.srt -c copy {{ $('整理檔案路徑').item.json.root_path }}/output/output.mkv"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        912
+      ],
+      "id": "c73a1c21-abd4-4f02-be89-2489afcc0b56",
+      "name": "將字幕押入影片中",
+      "notes": "參數說明：\n\"-y\"，直接同意執行這個指令，不需要人為確認，\n因為流程執行中沒有可以輸入確認的地方，如果沒有設定的話會一直卡在這個步驟"
+    },
+    {
+      "parameters": {
+        "content": "## 將字幕押入最後的影片中\n### 需額外開啟字幕，使用mkv格式",
+        "height": 272,
+        "width": 592,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1904,
+        816
+      ],
+      "typeVersion": 1,
+      "id": "9a9948b3-f4b5-48ec-abbc-a34dff6cc6d9",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## 合併子母畫面\noverlay設定，子畫面所在位置\n\noverlay=x:y\n- x = 子畫面（overlay 視訊）的左上角 相對於主畫面的 X 座標\n- y = 子畫面（overlay 視訊）的左上角 相對於主畫面的 Y 座標\n\n\nW = 主畫面寬度\nH = 主畫面高度\nw = 子畫面寬度\nh = 子畫面高度\n10 = 邊距（單位：像素 px）\n\n- 左上角 → 10:10\n- 右上角 → W-w-10:10\n- 左下角 → 10:H-h-10\n- 右下角 → W-w-10:H-h-10\n\n\nscale=320:240 → 使用 scale 濾鏡，把影像縮放成 320x240\n[sub] → 把結果命名成一個暫存標籤（label），之後可以引用\n\n保持比例，自動算高\nscale=320:-1\n\n保持比例，自動算寬\nscale=-1:240\n\n\namix=inputs=2 → 混合兩個音訊\n\nduration=longest → 保留最長的音訊長度",
+        "height": 656,
+        "width": 608,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        816
+      ],
+      "typeVersion": 1,
+      "id": "1dd44d71-a01e-49f0-9fe5-89473ee86a51",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        64,
+        608
+      ],
+      "id": "d8c98f33-1870-42e7-89e7-3f156d5db4c5",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "content": "## 建立資料夾",
+        "height": 272,
+        "width": 496,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        512
+      ],
+      "typeVersion": 1,
+      "id": "efe8f4bf-3dc4-4a0c-9c96-6116c05922d1",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "command": "=ffmpeg -y -i {{ $('整理檔案路徑').item.json.root_path }}/output/merge_temp.mp4 -vf subtitles=\"{{ $json.subtitle_file }}/output/subtitle.srt:force_style='FontName=Microsoft YaHei,FontSize=28,PrimaryColour=&H00FFFF00&'\" {{ $('整理檔案路徑').item.json.root_path }}/output/output.mp4"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2304,
+        1232
+      ],
+      "id": "c9b77c57-0f0c-4aa2-a651-369dc288c71f",
+      "name": "將字幕押入影片中1",
+      "notes": "Window系統:\n在subtitles的路徑設定中，磁區的指定需使用兩個\"\\\"\n\nMac系統:\n在subtitles的路徑設定，可以使用最前面的root_path\n\n\n參數說明：\n\"-y\"，直接同意執行這個指令，不需要人為確認，\n因為流程執行中沒有可以輸入確認的地方，如果沒有設定的話會一直卡在這個步驟"
+    },
+    {
+      "parameters": {
+        "content": "## 將字幕押入最後的影片中\n### 無須額外開啟字幕，使用mp4格式\n### 字幕檔的絕對路徑需要特別設定，主要是指定磁區部分的寫法比較特殊",
+        "height": 272,
+        "width": 592
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1904,
+        1104
+      ],
+      "typeVersion": 1,
+      "id": "da46321b-7076-446b-9a2b-88bce95d27a2",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "command": "=powershell.exe -Command mkdir -p {{ $json.root_path }}/output"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        592,
+        608
+      ],
+      "id": "e587b823-65cd-4dd8-a4f0-fb47d6926d70",
+      "name": "建立output資料夾",
+      "onError": "continueRegularOutput",
+      "notes": "Window設定：\n為了與mac系統相容，指令使用powershell執行，路徑部分使用\"/\"而非\"\\\"\n前端添加\"powershell.exe -Command\"\n\nMac系統路徑設定:\n移除前端\"powershell.exe -Command\""
+    },
+    {
+      "parameters": {
+        "command": "=ffmpeg -y -i {{ $('整理檔案路徑').item.json.root_path }}/{{ $('整理檔案路徑').item.json.main_video }} -i {{ $('整理檔案路徑').item.json.root_path }}/{{ $('整理檔案路徑').item.json.sub_video }} -filter_complex \"[1:v]scale=-1:240[sub]; [0:v][sub]overlay=W-w:H-h[v]; [0:a][1:a]amix=inputs=2:duration=longest[a]\" -map \"[v]\" -map \"[a]\" {{ $('整理檔案路徑').item.json.root_path }}/output/merge_temp.mp4\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        480,
+        912
+      ],
+      "id": "f6d256c0-63d9-4b23-b3b9-6a365fb9830b",
+      "name": "合併子母畫面",
+      "notes": "參數說明：\n\"-y\"，直接同意執行這個指令，不需要人為確認，\n因為流程執行中沒有可以輸入確認的地方，如果沒有設定的話會一直卡在這個步驟"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "087e55c9-e6de-47b2-857a-ae2ddcfb6620",
+              "name": "subtitle_file",
+              "value": "C\\\\:/n8n/母子畫面流程",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2016,
+        1232
+      ],
+      "id": "c30df123-54f2-42e3-a714-5f6812fa938a",
+      "name": "SubtitleFilePath"
+    },
+    {
+      "parameters": {
+        "content": "## 事前準備\n### 1. 安裝ffmpeg",
+        "height": 272,
+        "width": 592
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "7d2b2c96-bb8e-40fd-941b-592c8cbd64b1",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## 使用的節點\n### Trigger\n### Edit Fields\n## Execute Command\n## Wait\n### Read Files From Disk\n### HTTP Request\n### Convert to Text File\n### Write File to Disk",
+        "height": 464,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "467ba72e-9679-4665-b90e-44f8d8c81959",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## 工作流名稱:Execute Command。\n### 流程說明: \n   一、在 Execute Command 節點中使用 ffmpeg 將錄好的兩個影片合併成子母畫面。\n   二、從影片中抽出音檔，並產生字幕檔。\n   三、將字幕嵌入影片中\n  \n### 詳細內容: \n   一、使用 Execute Command 節點建立子目錄。\n   二、在 Execute Command 節點中使用 ffmpeg 將錄好的兩個影片合併成子母畫面。\n   三、從影片中抽出音檔\n   四、使用 Open AI 語音轉文字產生字幕檔。\n\n## 注意事項:\n### 來源影片須放在設定的目錄底下即可",
+        "height": 464,
+        "width": 608,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "e43d9633-3bc1-4e27-9db9-e8a2f455ac1e",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        608
+      ],
+      "id": "a58d52c6-b4f9-4152-9241-9a43ea0bdeae",
+      "name": "Wait",
+      "webhookId": "e9b42c7f-da18-4b9f-9497-a74578632fcc"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "整理檔案路徑": {
+      "main": [
+        [
+          {
+            "node": "建立output資料夾",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "拆分音訊檔": {
+      "main": [
+        [
+          {
+            "node": "讀取拆分出來的音訊檔",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "讀取拆分出來的音訊檔": {
+      "main": [
+        [
+          {
+            "node": "產生SRT字幕檔",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "產生SRT字幕檔": {
+      "main": [
+        [
+          {
+            "node": "Convert to Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Text": {
+      "main": [
+        [
+          {
+            "node": "字幕檔儲存",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "字幕檔儲存": {
+      "main": [
+        [
+          {
+            "node": "SubtitleFilePath",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "將字幕押入影片中",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "整理檔案路徑",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "建立output資料夾": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "合併子母畫面": {
+      "main": [
+        [
+          {
+            "node": "拆分音訊檔",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SubtitleFilePath": {
+      "main": [
+        [
+          {
+            "node": "將字幕押入影片中1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "合併子母畫面",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "94713449-fc5a-46ee-a704-40247d3a807c",
+  "meta": {
+    "instanceId": "f8196f72a77eaec846e7544ed8ad0504266351812ab50840c10d811baedfd63a"
+  },
+  "id": "oMUJF7ifSdyFFgEh",
+  "tags": []
+}
