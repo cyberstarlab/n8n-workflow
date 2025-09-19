@@ -14,7 +14,7 @@
 
 
 ## 🎥 教學影片
-👉 我們的 YouTube 頻道：https://www.youtube.com/@CyberstarLab
+👉 我們的 YouTube 頻道：https://www.youtube.com/@CyberstarLab  
 📌 記得訂閱、按讚和開啟小鈴鐺，開啟你的工作自動化之路！🚀
 
 
