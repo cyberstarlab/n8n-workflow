@@ -1,0 +1,270 @@
+{
+  "name": "E09.loop和 Database(MySQL)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -360
+      ],
+      "id": "f4ed4384-9c4c-4547-b5b9-ba5f36c717b6",
+      "name": "點擊啟動"
+    },
+    {
+      "parameters": {
+        "content": "## 工作流名稱: http, loop, split out 與 MySQL 說明\n### 流程說明: 示範 http get file, Loop, Split out 與 MySql 等 Nodes 的使用。\n\n### 詳細內容:\n    1. Http 取得檔案資料。\n    2. Loop 逐筆處理資料。\n    3. 最終寫入 MySql 功能示範。\n### 注意事項:\n    1. 政府資料開放平台 上市公司基本資料https://data.gov.tw/dataset/18419，\n       讀取 CSV 資料檔的網址 https://mopsfin.twse.com.tw/opendata/t187ap03_L.csv",
+        "height": 380,
+        "width": 940,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -820
+      ],
+      "id": "0ba66f21-7ae5-49c0-afaa-ee664ffa19ab",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## E09 用到的 Node\n### Manual Trigger\n## HTTP GET(Response file)\n### Extract from file\n## Split out\n## Loop\n## MySQL",
+        "height": 300,
+        "width": 320,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        820,
+        -820
+      ],
+      "id": "854d76a1-e7d7-458f-866b-f7db0bea7dde",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        280,
+        -360
+      ],
+      "id": "8480736d-3d57-48a5-b037-291762095e03",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "url": "https://mopsfin.twse.com.tw/opendata/t187ap03_L.csv",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        60,
+        -360
+      ],
+      "id": "a1f6016d-9fa2-44da-a288-9cd7645f75e0",
+      "name": "HTTP 取得CSV 檔"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['公司代號']",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "['公司名稱'], ['公司簡稱'], ['住址'], ['營利事業統一編號'], ['總機電話'], ['傳真機號碼'], ['電子郵件信箱'], ['網址']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -360
+      ],
+      "id": "5731bbaf-7f5d-4494-8171-a7c85633ef7c",
+      "name": "分離資料"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        700,
+        -360
+      ],
+      "id": "c53f88fd-2c25-48c8-ae2d-5888b0f738f0",
+      "name": "迴圈"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": {
+          "__rl": true,
+          "value": "listed_company",
+          "mode": "list",
+          "cachedResultName": "listed_company"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "company_id",
+        "valueToMatchOn": "={{ $json['[\\'公司代號\\']'] }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "company_name",
+              "value": "={{ $json['[\\'公司名稱\\']'] }}"
+            },
+            {
+              "column": "short_name",
+              "value": "={{ $json['[\\'公司簡稱\\']'] }}"
+            },
+            {
+              "column": "address",
+              "value": "={{ $json['[\\'住址\\']'] }}"
+            },
+            {
+              "column": "business_id",
+              "value": "={{ $json['[\\'營利事業統一編號\\']'] }}"
+            },
+            {
+              "column": "phone",
+              "value": "={{ $json['[\\'總機電話\\']'] }}"
+            },
+            {
+              "column": "fax",
+              "value": "={{ $json['[\\'傳真機號碼\\']'] }}"
+            },
+            {
+              "column": "email",
+              "value": "={{ $json['[\\'電子郵件信箱\\']'] }}"
+            },
+            {
+              "column": "website",
+              "value": "={{ $json['[\\'網址\\']'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        -320
+      ],
+      "id": "03ef5e33-9d9a-403b-b049-76e24909a2c7",
+      "name": "MySQL寫入資料庫",
+      "credentials": {
+        "mySql": {
+          "id": "LHDeys66fpKEJn7o",
+          "name": "MySQL(n8n tutorial)"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "點擊啟動": {
+      "main": [
+        [
+          {
+            "node": "HTTP 取得CSV 檔",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP 取得CSV 檔": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "分離資料",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "分離資料": {
+      "main": [
+        [
+          {
+            "node": "迴圈",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "迴圈": {
+      "main": [
+        [],
+        [
+          {
+            "node": "MySQL寫入資料庫",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL寫入資料庫": {
+      "main": [
+        [
+          {
+            "node": "迴圈",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "647123d7-aed9-43cd-9597-08d3a9b2d53c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5319f7ddebad67a3109b936b147dba84cc88bfa9470d2304e4761e96f82a7c70"
+  },
+  "id": "LrBxLPpLe12kFg18",
+  "tags": [
+    {
+      "createdAt": "2024-11-18T09:09:18.739Z",
+      "updatedAt": "2025-06-10T12:49:53.354Z",
+      "id": "rJVYb7OuI1JyNOJ4",
+      "name": "教學影片"
+    },
+    {
+      "createdAt": "2025-04-20T10:59:38.671Z",
+      "updatedAt": "2025-04-20T12:13:53.692Z",
+      "id": "L8xfvM2kTOCMtEXi",
+      "name": "完成"
+    }
+  ]
+}

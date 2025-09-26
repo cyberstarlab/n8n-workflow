@@ -1,0 +1,173 @@
+{
+  "name": "E08-2. Webhook 和 HTTP POST(POST)",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/simple-post",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"cityName\": \"{{ $json['縣市名'] }}\"}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -920,
+        -500
+      ],
+      "id": "f6c4c756-2cfb-48c3-a57a-cceee7a0226e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "## 工作流名稱: Webhook 與 HTTP POST Request Node 說明\n### 流程說明: Webhook 相關功能 與 HTTP POST 的示範\nPart 2. http request post \n### 詳細內容:\n    1. Webhook 功能簡單示範\n    2. HTTP POST 功能示範\n### 注意事項:\n",
+        "height": 320,
+        "width": 800,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1180,
+        -900
+      ],
+      "id": "ff849306-256a-4791-bcc6-7b6d29e49911",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all();\n\nlet tablerow = \"\";\n\nfor (const {json} of data) {\n  tablerow += `<h2>${json.name}</h2>\n   <div>地址:${json.address}</div>\n   <div>電話:${json.phone}</div>`;\n   if (json.website)\n   tablerow += `<div>網站:${json.website}</div>`;\n   if (json.facebook)\n    tablerow += `<div>臉書:${json.facebook}</div>`;\n  \n  if (json.ticketPrice)\n    tablerow += `<p>票價:${json.ticketPrice}</p>`;\n  tablerow += \"==============================\"\n}\n\n// 回傳為 HTML 檔案內容（可輸出成 binary 檔案）\nreturn [{\n    json:{content: tablerow}\n  }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -740,
+        -500
+      ],
+      "id": "59fa434b-ba05-4951-b183-a935ba5eb959",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "## E08-2 用到的 Node\n### On form submission\n## Http Request Post\n### Code\n### Form Ending",
+        "height": 300,
+        "width": 280,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        -900
+      ],
+      "id": "a44d83c4-6c8d-464a-ba11-c7b6ace084b9",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "formTitle": "查詢縣市博物館",
+        "formDescription": "查詢台灣某縣市的博物館列表",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "縣市名",
+              "placeholder": "輸入縣市名,如:臺南市",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "查詢"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1120,
+        -500
+      ],
+      "id": "6840684d-a9d2-44fe-ae80-f2c0106bbd20",
+      "name": "On form submission",
+      "webhookId": "85b882d3-b7d5-4a67-8e68-5d28a469fd1e"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "showText",
+        "responseText": "={{ $('Code').item.json.content }}"
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -500
+      ],
+      "id": "a927a2f0-081f-4931-948d-671699edf47f",
+      "name": "Form",
+      "webhookId": "122849d7-02a3-45e0-a7e3-15dfb7ba48ba"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fcdf7f72-f47e-4f83-9b9c-57c6f82b119f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5319f7ddebad67a3109b936b147dba84cc88bfa9470d2304e4761e96f82a7c70"
+  },
+  "id": "Weza5wgJGqKbRVqV",
+  "tags": [
+    {
+      "createdAt": "2025-04-20T10:59:38.671Z",
+      "updatedAt": "2025-04-20T12:13:53.692Z",
+      "id": "L8xfvM2kTOCMtEXi",
+      "name": "完成"
+    },
+    {
+      "createdAt": "2024-11-18T09:09:18.739Z",
+      "updatedAt": "2025-06-10T12:49:53.354Z",
+      "id": "rJVYb7OuI1JyNOJ4",
+      "name": "教學影片"
+    }
+  ]
+}

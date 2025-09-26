@@ -1,0 +1,396 @@
+{
+  "name": "EP08_1",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 工作流名稱: Webhook 與 HTTP POST Request Node 說明\n### 流程說明: Webhook 相關功能 與 HTTP POST 的示範\nPart 1. Webhook \n### 詳細內容:\n    1. Webhook 功能簡單示範\n    2.依收到的城市回傳該城市的博物館 \n### 注意事項:\n",
+        "height": 340,
+        "width": 860,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        208
+      ],
+      "id": "c63f54e5-ecc8-40e1-a409-e26b4ce330bb",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "simple-post",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        640
+      ],
+      "id": "0f198aab-34ae-465e-a47a-e81b02e624af",
+      "name": "Webhook",
+      "webhookId": "8c4aab80-1c95-4b58-bae8-3340ecb11738"
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:/path/museum.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        640
+      ],
+      "id": "abba842f-7848-4e9f-8c17-3669a86726e0",
+      "name": "讀取本地的檔案"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        640
+      ],
+      "id": "2f2f39d4-2a8c-4d23-a70d-8b79d9e2ec92",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        640
+      ],
+      "id": "0c16551d-7eb2-4f0d-8a19-24492611a35e",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "72634c3a-727d-4dff-b271-4d7bb8006384",
+              "leftValue": "={{ $json.cityName }}",
+              "rightValue": "={{ $('Webhook').item.json.body.cityName }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        96,
+        640
+      ],
+      "id": "b2ac8b99-0ee1-41fe-b00a-0cfc2c9c9388",
+      "name": "Filter",
+      "notesInFlow": true,
+      "notes": "過濾指定縣市"
+    },
+    {
+      "parameters": {
+        "content": "## E08-1 用到的 Node\n## Webhook\n### Read file from Disk\n### Extract from File\n### Split out\n## Filter\n## Response to Webhook",
+        "height": 300,
+        "width": 280,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        256,
+        256
+      ],
+      "id": "d538cd77-c32f-4acc-8113-7af439dbfd6f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        640
+      ],
+      "id": "1cef798b-0b8c-4728-bb73-6ea786290487",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        896
+      ],
+      "id": "e3dff96d-f722-42a7-8ae7-a98b79ae372a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:/path/museum.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        896
+      ],
+      "id": "1dcd2a59-bb4b-4b34-95ee-f9f848cb659a",
+      "name": "讀取本地檔案"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        96,
+        896
+      ],
+      "id": "2008ddd1-6784-47b8-840e-b148c3cb4fe3",
+      "name": "Split Out 拆分"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "911cffaf-9e1e-4735-bdc3-100568cbabb5",
+              "name": "cityname",
+              "value": "高雄市",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        896
+      ],
+      "id": "1bd2b4c5-3a4c-4e7a-8d96-600996a1aca9",
+      "name": "輸入查詢縣市"
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        896
+      ],
+      "id": "8e788e33-746d-43b8-b715-495c319ef8c8",
+      "name": "Extract 讀取資料"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "72634c3a-727d-4dff-b271-4d7bb8006384",
+              "leftValue": "={{ $json.cityName }}",
+              "rightValue": "={{ $('輸入查詢縣市').item.json.cityname }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        896
+      ],
+      "id": "bbd26b32-e2f4-451f-bd00-6e6fb23b206b",
+      "name": "Filter 過濾",
+      "notesInFlow": true,
+      "notes": "過濾指定縣市"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "讀取本地的檔案",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "讀取本地的檔案": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "輸入查詢縣市",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "讀取本地檔案": {
+      "main": [
+        [
+          {
+            "node": "Extract 讀取資料",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out 拆分": {
+      "main": [
+        [
+          {
+            "node": "Filter 過濾",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "輸入查詢縣市": {
+      "main": [
+        [
+          {
+            "node": "讀取本地檔案",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract 讀取資料": {
+      "main": [
+        [
+          {
+            "node": "Split Out 拆分",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4ed5cfad-daec-41f3-ab05-247fd27368da",
+  "meta": {
+    "instanceId": "f8196f72a77eaec846e7544ed8ad0504266351812ab50840c10d811baedfd63a"
+  },
+  "id": "7173ix1SMwGeWqBy",
+  "tags": [
+    {
+      "createdAt": "2025-06-13T05:43:57.643Z",
+      "updatedAt": "2025-06-13T05:43:57.643Z",
+      "id": "X6jJMO6OrhPeogZK",
+      "name": "教學影片"
+    },
+    {
+      "createdAt": "2025-07-03T07:11:16.210Z",
+      "updatedAt": "2025-07-03T07:11:16.210Z",
+      "id": "EpFLvUSPtDq7c5cC",
+      "name": "完成"
+    }
+  ]
+}

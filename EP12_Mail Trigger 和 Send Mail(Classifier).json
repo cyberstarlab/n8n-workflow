@@ -1,0 +1,487 @@
+{
+  "name": "E12",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 工作流名稱:Mail Trigger 和傳送 Email。\n### 流程說明: \n   一、收到 Email 時自動啟動流程、並回覆 Email。\n   二、經由人員檢核(Human in loop )，繼續後續流程。\n\n### 詳細內容: \n   一、收到查詢產品使用說明書的 Email。\n   二、利用 Text Classifier 分類郵件。\n   三、需要使用手冊，則直接寄送給客戶，cc 給相關負責人。\n   四、其他問題則轉寄送給相關負責的人員，回答問題後再寄送給客戶。\n### 注意事項:\n",
+        "height": 300,
+        "width": 920,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2224,
+        -528
+      ],
+      "id": "f4c77cfc-6d25-456f-8c70-cebfd7785d64",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## E12 用到的 Node\n## Mail Trigger\n### Edit Field\n## Text Classifier\n### Read from file\n## Send Email\n### If \n## Send Email(Human in the Loop)\n\n",
+        "height": 500,
+        "width": 380,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        -608
+      ],
+      "id": "efaa78b5-3ccf-44c4-acfd-c4294587dd6a",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 收到Email 判斷後，直接回信給客戶",
+        "height": 100
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1840,
+        -192
+      ],
+      "id": "aea469e0-ebc6-4220-a99c-ed12e7e45b35",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -2192,
+        -16
+      ],
+      "id": "d6e2aa1e-a63d-4861-9e69-7fc159d57479",
+      "name": "Email Trigger (IMAP)",
+      "credentials": {
+        "imap": {
+          "id": "pYiSewL5Cd46tZk5",
+          "name": "IMAP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69ff0862-9e46-4a49-b767-8cc7097d3602",
+              "name": "subject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "7aa3285d-09b4-4ade-85fa-99a3d030be18",
+              "name": "date",
+              "value": "={{ $json.date }}",
+              "type": "string"
+            },
+            {
+              "id": "47c91f15-6972-4d6c-9bd4-8774f0e17227",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "6b8ebe11-5d0e-4c76-99fc-91bd01df73bf",
+              "name": "from",
+              "value": "={{ $json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "9de0c875-da50-4f9f-9016-22ab04e0f535",
+              "name": "sendBy",
+              "value": "={{ $json.from.value[0].name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1984,
+        -16
+      ],
+      "id": "f10c7a92-9823-437f-aa26-2aee73bc26f2",
+      "name": "取得 Email 的欄位"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/Users/AI/n8n/EP12/{{ $json.matchedKeywords[0] }}.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -1232,
+        -176
+      ],
+      "id": "6a81196a-06b6-4a6e-ba6a-ca4b2a979e24",
+      "name": "讀取手冊"
+    },
+    {
+      "parameters": {
+        "fromEmail": "yourEmail",
+        "toEmail": "={{ $('取得 Email 的欄位').item.json.from }}",
+        "subject": "=回覆:{{ $('取得 Email 的欄位').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('取得 Email 的欄位').item.json.sendBy }}，為您寄送{{ $('Code').item.json.matchedKeywords[0] }}使用手冊，詳如附件！",
+        "options": {
+          "appendAttribution": false,
+          "attachments": "=data",
+          "ccEmail": "yourEmail"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1024,
+        -176
+      ],
+      "id": "1d7654b6-1954-4a97-85c6-474147312fad",
+      "name": "寄送使用手冊",
+      "webhookId": "a74314b3-0f9f-4929-a21f-e0d9da96acdb",
+      "credentials": {
+        "smtp": {
+          "id": "AjWSLHOxqwlPtgr8",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "fromEmail": "yourEmail",
+        "toEmail": "=yourEmail",
+        "subject": "=請回覆:{{ $('取得 Email 的欄位').item.json.from }}\n{{ $('取得 Email 的欄位').item.json.subject }}",
+        "message": "=內容:{{ $('取得 Email 的欄位').item.json.text }}",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "立即回覆",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "立即回覆"
+                  },
+                  {
+                    "option": "稍後回覆"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "回覆內容",
+              "fieldType": "textarea",
+              "placeholder": "填寫回覆內容：",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "messageButtonLabel": "回覆",
+          "responseFormTitle": "=回覆客戶 {{ $('取得 Email 的欄位').item.json.subject }}",
+          "responseFormDescription": "=郵件內容： {{ $('取得 Email 的欄位').item.json.text }}",
+          "responseFormButtonLabel": "回覆給使用者",
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 3
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1424,
+        48
+      ],
+      "id": "4094bd16-2394-496e-8a8e-66fd10a349fc",
+      "name": "寄給人員處理",
+      "webhookId": "5139e6cd-d1e6-4e70-b23f-f6447b1404c4",
+      "credentials": {
+        "smtp": {
+          "id": "AjWSLHOxqwlPtgr8",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "yourEmail",
+        "toEmail": "={{ $('取得 Email 的欄位').item.json.from }}",
+        "subject": "=回覆:{{ $('取得 Email 的欄位').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "=感謝您的來信：\n\n{{ $('取得 Email 的欄位').item.json.subject }}\n{{ $('取得 Email 的欄位').item.json.text }}\n\n我們的回覆如下：\n\n{{ $json.data['回覆內容'] }}\n\n如果還有問題請來電:",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1008,
+        32
+      ],
+      "id": "accede99-b148-41af-80ce-c06ece2ab2a2",
+      "name": "Send Email",
+      "webhookId": "8bb3199b-38ec-4781-a086-d1343b50d113",
+      "credentials": {
+        "smtp": {
+          "id": "AjWSLHOxqwlPtgr8",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fc7c4713-d613-42fa-b370-51c6175a81a4",
+              "leftValue": "={{ $json.data['立即回覆'] }}",
+              "rightValue": "立即回覆",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1248,
+        48
+      ],
+      "id": "78f324d7-4836-41be-8f27-f3521bdc4c51",
+      "name": "判斷是不立即回覆"
+    },
+    {
+      "parameters": {
+        "content": "## 收到Email 判斷後，由客服人員回信給客戶",
+        "height": 100,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        240
+      ],
+      "id": "bdd413b7-1be3-43c2-b21e-c80b7a283d79",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.subject }}\\n{{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "發送使用手冊",
+              "description": "與使用操作有關，寄送使用手冊"
+            },
+            {
+              "category": "一般客服問答",
+              "description": "轉其他服務人員"
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "你是行動打卡鐘與巡檢系統的 AI 客服系統。\n請依據使用者提供的文字內容進行分類。分成\n\"發送使用手冊\":文件內容是有關兩個系統相關使用問題，或直接要求傳送使用說明或操作手冊。\n\"一般客服問答\":非系統使用相關問題，如詢問報價、付款問題...等，或非以上兩個系統的問題。",
+          "enableAutoFixing": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        -1808,
+        -16
+      ],
+      "id": "6ff2ba69-c57d-4183-8390-18cf7f15a34b",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini-2025-04-14"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1808,
+        160
+      ],
+      "id": "0c63c6c7-8716-43d8-b288-4ca3e3a09d5a",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "jsCode": "const subject= $input.first().json.subject;\nconst text= $input.first().json.text;\nconst keywords = [\"行動打卡鐘\", \"巡刷系統\"];\n\nconst matchedKeywords = keywords.filter(keyword =>\n  subject.includes(keyword) || text.includes(keyword)\n);\n\nif (matchedKeywords.length > 0) {\n  return [{\n    matchedKeywords,  // 回傳命中的關鍵字陣列\n  }];\n} else {\n  return [];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1424,
+        -176
+      ],
+      "id": "404538e9-a5ec-4650-bf70-43fd67571a4f",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Email Trigger (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "取得 Email 的欄位",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "取得 Email 的欄位": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "讀取手冊": {
+      "main": [
+        [
+          {
+            "node": "寄送使用手冊",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "寄給人員處理": {
+      "main": [
+        [
+          {
+            "node": "判斷是不立即回覆",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "判斷是不立即回覆": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "寄給人員處理",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "讀取手冊",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c3cefd23-23c4-4da1-b9d9-3b38ad28f07b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f8196f72a77eaec846e7544ed8ad0504266351812ab50840c10d811baedfd63a"
+  },
+  "id": "7173ix1SMwGeWqBy",
+  "tags": [
+    {
+      "createdAt": "2025-06-13T05:43:57.643Z",
+      "updatedAt": "2025-06-13T05:43:57.643Z",
+      "id": "X6jJMO6OrhPeogZK",
+      "name": "教學影片"
+    },
+    {
+      "createdAt": "2025-07-03T07:11:16.210Z",
+      "updatedAt": "2025-07-03T07:11:16.210Z",
+      "id": "EpFLvUSPtDq7c5cC",
+      "name": "完成"
+    },
+    {
+      "createdAt": "2025-07-15T07:17:09.947Z",
+      "updatedAt": "2025-07-15T07:17:09.947Z",
+      "id": "nh9hSfuxityxJaUo",
+      "name": "學習"
+    }
+  ]
+}

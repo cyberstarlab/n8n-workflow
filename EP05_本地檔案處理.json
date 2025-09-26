@@ -1,0 +1,259 @@
+{
+  "name": "E05本地檔案處理",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 工作流名稱: 處理本地檔案\n### 流程說明: 處理伺服器本地端檔案\n### 詳細內容:\n    1. 儲存檔案\n    2. 讀取檔案\n    3. Local File Trigger\n### 注意事項:\n    存放的目錄必須先存在！",
+        "height": 320,
+        "width": 360,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        -640
+      ],
+      "id": "f5b345ec-cd72-4038-8f2d-b975e49af4fd",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "上傳檔案",
+        "formDescription": "上傳一個檔案，並存放到伺服器。",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "file",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": "jpg, png, pdf, txt",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "上傳",
+          "path": "upload_file",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "上傳完成！"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        -380
+      ],
+      "id": "3471efb9-85af-4f0f-b0e5-c77248b8f727",
+      "name": "On form submission",
+      "webhookId": "d3ff227e-baea-4e65-aae9-bcfe61a3ff62"
+    },
+    {
+      "parameters": {
+        "triggerOn": "file",
+        "path": "/Users/AI/n8n/monitored/contact.xls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        -120
+      ],
+      "id": "4078012b-b490-4160-89dd-d96e79e3f7e3",
+      "name": "Local File Trigger"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/Users/AI/n8n/monitored/contact.xls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -380,
+        -120
+      ],
+      "id": "bd85c7dd-ceca-4269-a018-7f98def05ae4",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "operation": "xls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -120
+      ],
+      "id": "8bca4e67-912a-4eba-8c52-9926ab30bb10",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/Users/AI/n8n/upload_file/{{ $json.file.filename }}",
+        "dataPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        -380
+      ],
+      "id": "0a8189f0-daba-4cb2-ac71-750c306e88c9",
+      "name": "直接寫入本地磁碟"
+    },
+    {
+      "parameters": {
+        "operation": "html",
+        "options": {
+          "fileName": "contact.html"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        60,
+        -120
+      ],
+      "id": "7728aaca-7368-4b7a-8d65-3d00c477df10",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/Users/AI/n8n/output/{{ $binary.data.fileName }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        280,
+        -120
+      ],
+      "id": "58c8526e-1d37-4314-92c9-2dbdb09f5b5e",
+      "name": "轉HTML後存檔"
+    },
+    {
+      "parameters": {
+        "content": "## 上傳檔案採用原檔名存入本地磁碟機",
+        "height": 100,
+        "width": 220,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -580,
+        -480
+      ],
+      "id": "0ee19139-bb42-4139-92d4-1f8b9b2e587c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Local File Trigger 另一種型式的 Trigger,\n### 檔案有變動後，讀取 xls 檔案,轉成 html 後存入本地磁碟機。",
+        "height": 120,
+        "width": 400,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -980,
+        -260
+      ],
+      "id": "76f7d867-d4c8-4337-b1dd-c857ac70718a",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "直接寫入本地磁碟",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local File Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "轉HTML後存檔",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "直接寫入本地磁碟": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0aa448a5-3b51-47ae-9489-fbf27c25c02d",
+  "meta": {
+    "instanceId": "5319f7ddebad67a3109b936b147dba84cc88bfa9470d2304e4761e96f82a7c70"
+  },
+  "id": "Nyr1ttOsb77PeLEC",
+  "tags": [
+    {
+      "createdAt": "2024-11-18T09:09:18.739Z",
+      "updatedAt": "2025-06-10T12:49:53.354Z",
+      "id": "rJVYb7OuI1JyNOJ4",
+      "name": "教學影片"
+    }
+  ]
+}

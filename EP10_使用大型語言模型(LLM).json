@@ -1,0 +1,492 @@
+{
+  "name": "E10_使用大型語言模型(LLM)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 工作流名稱: 使用大語言模型\n### 流程說明: \n   一、n8n 大語言模型的基本用法。\n   二、由 LLM 產生故事，並結構化輸出。\n\n### 詳細內容: \n   一、需要注意 User Message 和 System Message 的寫法。\n   二、Structured Output Parser 的用法。 \n   三、用 Excel 的部份資料\n### 注意事項:\n",
+        "height": 280,
+        "width": 920,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -160
+      ],
+      "id": "01f900ce-89d1-4a70-aefb-a2084a19b584",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## E10 用到的 Node\n### When caht message received \n## Basic LLM Chain\n## OpenAI Chat Model\n### Manual Trigger\n### Edit Fields\n### Read From Disk\n### Extract from File\n### Loop Over Items\n## Structured Output Parser\n## Crypto\n### MySQL\n## Google Sheet",
+        "height": 500,
+        "width": 400,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        512,
+        -144
+      ],
+      "id": "7dc60ac6-ee28-4221-9fff-58efff6418e0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        208
+      ],
+      "id": "819c0df5-1bf4-4dbe-aef1-236dab461862",
+      "name": "When chat message received",
+      "webhookId": "42c07f57-f8b5-44c2-827d-07fefea4fbfb"
+    },
+    {
+      "parameters": {
+        "messages": {
+          "messageValues": [
+            {
+              "message": "你是一個精明的 AI 助手,名字叫志明,請你在回答問題時，除了專有名詞可以使用英文外，請全部使用繁體中文。"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        32,
+        208
+      ],
+      "id": "da480215-944a-4fd6-be72-04436c244aed",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini-2025-04-14"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        384
+      ],
+      "id": "3ccce991-a5ff-4887-a727-1fa396c150e0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "o4p7jK45FkkueVdI",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 最簡單的LLM 用法",
+        "height": 100
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        208
+      ],
+      "id": "18fc1884-b263-430c-92a4-ec13b30906c0",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini-2025-04-14"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        928
+      ],
+      "id": "1e4e9693-b0f5-46cd-9b44-67c9465cae4d",
+      "name": "OpenAI gpt-4.1-mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "o4p7jK45FkkueVdI",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=請撰寫一個故事，主題是: {{ $json['主題/類型'] }}\n時間與地點背景:{{ $json['時間與地點背景'] }}\n主角：{{ $json['主角介紹'] }}\n核心衝突或任務:{{ $json['核心衝突或任務'] }}\n結局方向:{{ $json['結局方向'] }}\n風格語氣:{{ $json['風格語氣'] }}\n用途/篇幅:{{ $json['用途/篇幅'] }}\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "你是一個說故事高手，請依照使用者輸入的提示，撰寫一個故事內容，用語盡可能口語化，使用繁體中文。\n請將故事內容適度分段。並在必要換行時加入'\\n'\n\n請輸出以下欄位:\n subject(標題):這個故事的標題名稱\n content(內容):這個故事的內容\n\n並將它們轉換成 JSON 格式:\n{\n  \"subject\":\"這個故事的標題名稱\",\n  \"content\":\"這個故事的內容\"\n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        592,
+        704
+      ],
+      "id": "86ed7991-bb4a-413c-9e49-002efc3c2a10",
+      "name": "故事產生器"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"subject\":\"白雪公主\",\n  \"content\":\"這裡是故事的內容。...\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        928
+      ],
+      "id": "4d6698c4-2b91-4ed8-bb14-fb5025c6dfd0",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "content": "## 由 LLM 產生故事\n## System Message\n## 結構化輸出",
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        480
+      ],
+      "id": "ecc382be-d04d-4479-99bd-1f1e65cabde0",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        688
+      ],
+      "id": "0f88ae92-7ea0-475c-9984-242483b41a19",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "headerRow": true,
+          "range": "A1:H5"
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        160,
+        688
+      ],
+      "id": "e19279d2-e92f-4fb5-a9f8-36e260bec9de",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        384,
+        688
+      ],
+      "id": "c43ada38-34a5-44fb-b9ef-e2ea2dc0dab3",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.setting_file }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        688
+      ],
+      "id": "847b91cd-5daf-407e-bc36-b37f1df2b42a",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "07a7b779-9931-4a20-8c2b-c4d639777a55",
+              "name": "setting_file",
+              "value": "C:/path/故事大綱.xlsx",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        688
+      ],
+      "id": "4d450086-7ea7-44ec-96db-eabb31d4d8f7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1QmUwq13v6KHPGvVKpUhYkDLO_qUWgD7x_W_X_W6gp2M",
+          "mode": "list",
+          "cachedResultName": "short_story",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QmUwq13v6KHPGvVKpUhYkDLO_qUWgD7x_W_X_W6gp2M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QmUwq13v6KHPGvVKpUhYkDLO_qUWgD7x_W_X_W6gp2M/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content": "={{ $json.output.content }}",
+            "subject": "={{ $json.output.subject }}",
+            "category": "={{ $('Extract from File').item.json['主題/類型'] }}"
+          },
+          "matchingColumns": [
+            "uuid"
+          ],
+          "schema": [
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1104,
+        928
+      ],
+      "id": "69013db7-9f69-4a05-8f41-b3aebb5fd41b",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbcVHQ4NZoUCKgj2",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI gpt-4.1-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "故事產生器",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "故事產生器",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "故事產生器": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "故事產生器",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d1a3d973-515a-49f6-afb6-e02f9eb7d0a3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f8196f72a77eaec846e7544ed8ad0504266351812ab50840c10d811baedfd63a"
+  },
+  "id": "7173ix1SMwGeWqBy",
+  "tags": [
+    {
+      "createdAt": "2025-06-13T05:43:57.643Z",
+      "updatedAt": "2025-06-13T05:43:57.643Z",
+      "id": "X6jJMO6OrhPeogZK",
+      "name": "教學影片"
+    },
+    {
+      "createdAt": "2025-07-03T07:11:16.210Z",
+      "updatedAt": "2025-07-03T07:11:16.210Z",
+      "id": "EpFLvUSPtDq7c5cC",
+      "name": "完成"
+    },
+    {
+      "createdAt": "2025-07-15T07:17:09.947Z",
+      "updatedAt": "2025-07-15T07:17:09.947Z",
+      "id": "nh9hSfuxityxJaUo",
+      "name": "學習"
+    }
+  ]
+}

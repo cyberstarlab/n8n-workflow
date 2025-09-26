@@ -1,0 +1,306 @@
+{
+  "name": "E07.HTTP GET",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -580,
+        -200
+      ],
+      "id": "f4b581bf-32ef-438f-879d-45108c558d6d",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://cloud.culture.tw/frontsite/trans/emapOpenDataAction.do?method=exportEmapJson&typeId=H",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -380,
+        -200
+      ],
+      "id": "d5d16fab-a895-46f3-aa14-324654dd4d94",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "html",
+        "options": {
+          "fileName": "museum.html",
+          "mimeType": "text/html"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        20
+      ],
+      "id": "01880346-6166-45f6-9b8a-abe66578a41d",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "name, address, phone, website, facebook, ticketPrice, , cityName",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        -200
+      ],
+      "id": "f4a71bbd-9949-4d7b-aa85-9e4a712e0ab0",
+      "name": "Split Out",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/Users/AI/n8n/output/{{ $binary.data.fileName }}",
+        "dataPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        220,
+        20
+      ],
+      "id": "b4b47a25-e20d-4a74-927e-4c9e93aeff5b",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html lang=\"zh-Hant\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>博物館資料</title>\n  <style>\n    body { font-family: sans-serif; padding: 20px; }\n    table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }\n    th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; text-align: left; }\n    th { background-color: #f2f2f2; width: 150px; }\n    h2 { margin-top: 40px; color: #2c3e50; }\n  </style>\n</head>\n<body>\n  <h1>博物館資訊列表</h1>\n{{ $json.content }}\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -380,
+        20
+      ],
+      "id": "692dce31-ab10-48fe-a5a5-795217b7fe50",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all();\n\nlet tablerow = \"\";\n\nfor (const {json} of data) {\n  tablerow += `<h2>${json.name}</h2><table>\n   <tr><th>地址</th><td>${json.address}</td></tr>\n   <tr><th>電話</th><td>${json.phone}</td></tr>`;\n   if (json.website)\n   tablerow += `<tr><th>網站</th><td><a href=\"${json.website}\">${json.name}</a></td></tr>`;\n   if (json.facebook)\n    tablerow += `\n   <tr><th>臉書</th><td><a href=\"${json.facebook}\">${json.name} Facebook</a></td></tr>`;\n  \n  if (json.ticketPrice)\n    tablerow += `\n   <tr><th>票價</th><td>${json.ticketPrice}</td></tr>\n   </table>`;\n}\n\n// 回傳為 HTML 檔案內容（可輸出成 binary 檔案）\nreturn [{\n    json:{content: tablerow}\n  }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        -200
+      ],
+      "id": "a0d12b82-10e6-41f8-b9a5-28a5e8ba9f7a",
+      "name": "Table Code"
+    },
+    {
+      "parameters": {
+        "content": "## 工作流名稱: HTTP Get Request Node 說明\n### 流程說明: HTTP GET 的示範\n### 詳細內容:\n    1. HTTP GET\n    2. Split out 節點說明\n    3. Code 節點結合 HTML Node \n### 注意事項:\n",
+        "height": 280,
+        "width": 520,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -620,
+        -660
+      ],
+      "id": "b0929614-8f84-4561-a825-84f0e59c338e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {
+          "format": true,
+          "fileName": "museum.json"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        40,
+        -400
+      ],
+      "id": "bf7655ab-6815-40bc-8bdc-c0278602bfbb",
+      "name": "Convert to JSON"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/Users/AI/n8n/output/{{ $binary.data.fileName }}",
+        "dataPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        220,
+        -400
+      ],
+      "id": "6e57326b-eebe-4d7f-a6ff-120fe31e0a63",
+      "name": "Write JSON File"
+    },
+    {
+      "parameters": {
+        "content": "## E07 用到的 Node\n### Manual Trigger\n## Edit Field\n## Http Request(Get)\n## Split out\n## Code\n## HTML\n### Convert to File\n### Write file to Disk",
+        "height": 340,
+        "width": 300,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -780
+      ],
+      "id": "1fb3cf93-f63a-44d8-8024-ead7d4e0fcff",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "db034a9c-6c53-4778-aa09-4896f4e2fa85",
+              "name": "html",
+              "value": "={{ $json.html.base64Encode() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -200,
+        20
+      ],
+      "id": "4b64ba21-339a-46a4-a0ed-5788e3f5c63e",
+      "name": "base64 編碼"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Table Code",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "base64 編碼",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Table Code": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to JSON": {
+      "main": [
+        [
+          {
+            "node": "Write JSON File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "base64 編碼": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c59851d6-0476-48c1-bea6-52636d96eb93",
+  "meta": {
+    "instanceId": "5319f7ddebad67a3109b936b147dba84cc88bfa9470d2304e4761e96f82a7c70"
+  },
+  "id": "C3L44vIUkdd0cmu3",
+  "tags": [
+    {
+      "createdAt": "2025-04-20T10:59:38.671Z",
+      "updatedAt": "2025-04-20T12:13:53.692Z",
+      "id": "L8xfvM2kTOCMtEXi",
+      "name": "完成"
+    }
+  ]
+}

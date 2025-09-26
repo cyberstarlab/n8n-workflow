@@ -1,0 +1,252 @@
+{
+  "name": "EP04(下載用",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 工作流名稱: 進階表單功能\n### 流程說明: 說明進階的表單功能。\n### 詳細內容:\n    1. 示範 Next Form Page 和 Form Ending。\n    2. 示範檔案上載。\n    3. 動態內容/選項的表單。\n    4. 自訂樣式。\n### 注意事項:\n",
+        "height": 260,
+        "width": 520,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "29ea6a2a-900e-4b66-b1df-cc40f6fd99a4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "線上客戶服務單",
+        "formDescription": "請留下資訊我們將盡快與您聯絡",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "姓名",
+              "placeholder": "請留下您的姓名",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "email",
+              "fieldType": "email",
+              "placeholder": "請留下您的 email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "下一頁",
+          "path": "customer_support"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        64
+      ],
+      "id": "8cc47e74-702d-4dfc-80b6-8f35659b3e34",
+      "name": "On form submission",
+      "webhookId": "8970b844-7225-4d84-a88f-7c517683f358"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "請問您想問什麼問題？",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "訂單與付款"
+                  },
+                  {
+                    "option": "配送與物流"
+                  },
+                  {
+                    "option": "商品問題"
+                  },
+                  {
+                    "option": "退換貨"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "問題詳細說明",
+              "fieldType": "textarea",
+              "placeholder": "請詳細說明您的問題內容"
+            }
+          ]
+        },
+        "options": {
+          "buttonLabel": "送出"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        768,
+        64
+      ],
+      "id": "4744e8dd-19de-4d61-b88a-a1c7e8adc25f",
+      "name": "Form",
+      "webhookId": "bd96e817-16d0-4932-a18d-e4e202d5e894"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "感謝您的留言",
+        "completionMessage": "={{ $('On form submission').item.json[\"姓名\"] }} 您好，\n您的 Email 是{{ $('On form submission').item.json.email }}\n您有{{ $json['請問您想問什麼問題？'] }}方面的問題：\n{{ $json['問題詳細說明'] }}\n我們的客服人員會盡快與您聯絡。",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        992,
+        64
+      ],
+      "id": "0d2ec9d8-d309-44f1-ac69-5f6332d99ede",
+      "name": "Form Response",
+      "webhookId": "5918ad90-32ee-4df7-b7fd-f7d41be01665"
+    },
+    {
+      "parameters": {
+        "formTitle": "問題照片",
+        "formDescription": "請上傳您的產品照片",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "照片",
+              "fieldType": "file",
+              "acceptFileTypes": "jpg, png",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "上傳",
+          "path": "upload",
+          "customCss": ":root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #fbfcfe;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n\t--color-submit-btn-bg: #66B3FF;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 448px;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n}"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        304
+      ],
+      "id": "a0300f61-3f12-4575-bde1-daffa45d90c2",
+      "name": "file upload form",
+      "webhookId": "219b9637-4609-4287-95be-d921baf7aaca"
+    },
+    {
+      "parameters": {
+        "defineForm": "json",
+        "jsonOutput": "[\n   {\n      \"fieldLabel\":\"問題分類\",\n      \"fieldType\":\"dropdown\",\n      \"fieldOptions\":{\n      \"values\": [{\"option\":\"破損\"},{\"option\":\"褪色\"},{\"option\":\"包裝不良\"},{\"option\":\"其他\"}]},\n      \"requiredField\":true\n   },\n     {\n      \"fieldLabel\":\"補充說明\",\n      \"fieldType\":\"textarea\",\n      \"placeholder\":\"如有任何補充說明，請在此描述。\"\n   }]",
+        "options": {
+          "buttonLabel": "提交",
+          "customCss": ":root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #fbfcfe;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n    /*改成綠色*/\n\t--color-submit-btn-bg: #00ff00;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 448px;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n}"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        768,
+        304
+      ],
+      "id": "7e49c049-9e66-43a2-898c-f7e2924e4696",
+      "name": "Form Description",
+      "webhookId": "9c899739-8f3a-4968-a2e7-95e799b800ee"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "謝謝您的指教",
+        "completionMessage": "我們已經收到您的反應，會盡快處理！",
+        "options": {
+          "customCss": ":root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #00ffff;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n\t--color-submit-btn-bg: #ff6d5a;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 448px;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n}"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        992,
+        304
+      ],
+      "id": "dfe04010-f64a-4221-8f42-9f6d1a200b12",
+      "name": "Form Upload Response",
+      "webhookId": "6f25ed0d-aacd-410f-af7f-1ea8d592e42b"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form": {
+      "main": [
+        [
+          {
+            "node": "Form Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "file upload form": {
+      "main": [
+        [
+          {
+            "node": "Form Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Description": {
+      "main": [
+        [
+          {
+            "node": "Form Upload Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "86983e41-13da-4492-af40-a4abbc193e8e",
+  "meta": {
+    "instanceId": "f8196f72a77eaec846e7544ed8ad0504266351812ab50840c10d811baedfd63a"
+  },
+  "id": "7173ix1SMwGeWqBy",
+  "tags": [
+    {
+      "createdAt": "2025-06-13T05:43:57.643Z",
+      "updatedAt": "2025-06-13T05:43:57.643Z",
+      "id": "X6jJMO6OrhPeogZK",
+      "name": "教學影片"
+    }
+  ]
+}

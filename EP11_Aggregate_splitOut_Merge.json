@@ -1,0 +1,458 @@
+{
+  "name": "E11_Aggregate_splitOut_Merge",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## E11 用到的 Node\n### On Form Submission\n### Edit Fields\n### Http Request\n### Extract from file\n### Split out \n## Merge\n### Filter\n## Aggregate \n### Code\n### Form Ending\n",
+        "height": 416,
+        "width": 336,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -240
+      ],
+      "id": "ac8a7186-0d39-45a4-9d04-605608cd15ed",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 工作流名稱: Split out、Aggregate和 Merge\n### 流程說明: 示範說明 Split out、Aggregate和 Merge 的使用。\n\n### 詳細內容:\n    1. 輸入要查詢的縣市以查詢該縣市上市櫃公司\n    2. Http 取得檔案資料。\n    3. Merge 合併上市、上櫃公司。\n    4. Aggregate 取出單純的列表,回傳結果。\n### 注意事項:\n    1. 政府資料開放平台 上市公司基本資料https://data.gov.tw/dataset/18419，\n       讀取 CSV 資料檔的網址 https://mopsfin.twse.com.tw/opendata/t187ap03_L.csv\n    2. 上櫃公司基本資料 https://data.gov.tw/dataset/25036\n       讀取 CSV 資料檔的網址 https://mopsfin.twse.com.tw/opendata/t187ap03_O.csv\n",
+        "height": 420,
+        "width": 940,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        -240
+      ],
+      "id": "6241b4b8-d7c4-404d-91dd-06535b060712",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf3fad87-0263-44e6-b65d-193fbd49809e",
+              "name": "listed-company",
+              "value": "https://mopsfin.twse.com.tw/opendata/t187ap03_L.csv",
+              "type": "string"
+            },
+            {
+              "id": "fe011c5a-7f78-49e0-ba33-d111022c09e5",
+              "name": "otc-company",
+              "value": "https://mopsfin.twse.com.tw/opendata/t187ap03_O.csv",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -608,
+        400
+      ],
+      "id": "bb9cb179-fdc0-46a9-b006-ce68994a4ae3",
+      "name": "記錄網址"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['listed-company'] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -352,
+        304
+      ],
+      "id": "8b2f9bf8-c112-4d55-b137-0c57caea5fe4",
+      "name": "HTTP 取得上市CSV 檔"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['otc-company'] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -352,
+        512
+      ],
+      "id": "0a18f1dc-e568-43bc-b429-6b9ed22f9101",
+      "name": "HTTP 取得上櫃CSV 檔"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        304
+      ],
+      "id": "81efbc03-e56b-4d6d-9448-48e13acf0955",
+      "name": "讀出上市公司資料"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        512
+      ],
+      "id": "f35dc105-7366-4008-adfb-bb6933b9c696",
+      "name": "讀出上櫃公司資料"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "公司代號",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "公司名稱, 公司簡稱, 住址, 營利事業統一編號,總機電話, 傳真機號碼, 電子郵件信箱, 網址",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        80,
+        512
+      ],
+      "id": "c40ff3bf-711a-429c-b824-186887461f64",
+      "name": "分離資料(上櫃)"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "公司代號",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "公司名稱, 公司簡稱, 住址, 營利事業統一編號,總機電話, 傳真機號碼, 電子郵件信箱, 網址",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        80,
+        304
+      ],
+      "id": "604211af-5cee-49e9-9aad-402cb32ef3d4",
+      "name": "分離資料(上市)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        320,
+        400
+      ],
+      "id": "f3552070-9b5f-4a03-8f05-b1da2d1ae21a",
+      "name": "合併上市櫃資料"
+    },
+    {
+      "parameters": {
+        "formTitle": "某縣市的上市櫃公司",
+        "formDescription": "查詢某縣市的現有上市櫃公司列表",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "縣市",
+              "placeholder": "請輸入要查詢的縣市名稱",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "查詢",
+          "path": "company_list"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -784,
+        400
+      ],
+      "id": "6ad70f4b-370e-42b3-95cb-5d3e1a7fabe7",
+      "name": "查詢表單",
+      "webhookId": "d3760f02-d0ba-4ab5-a676-048c5f2c6f43"
+    },
+    {
+      "parameters": {
+        "jsCode": "const company_list=$input.first().json.公司名稱;\n\n\nlet htmlList = `<h2>`+$('查詢表單').first().json['縣市']+`上市櫃公司</h2><ul>`;\n\n// 加入每一筆資料\nfor (const item of company_list) {\n  htmlList += `<li><h3>${item}</h3></li>`;\n}\n\n// 計算總筆數\nconst total = company_list.length;\nhtmlList += `</ul><br/><strong>共：${total}家</strong>`;\n\n\n// 回傳給 n8n\nreturn [{\n  json: {\n    htmlList: htmlList\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        400
+      ],
+      "id": "c38b385a-bb9b-4938-80bf-6fff2e7fe393",
+      "name": "轉換格式"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "公司名稱"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        672,
+        400
+      ],
+      "id": "1832f4e8-38a9-43dc-9724-f60f3b92f196",
+      "name": "聚集列表"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7671d948-6549-49b8-ae57-0d2f4562ae20",
+              "leftValue": "={{ $json[\"住址\"] }}",
+              "rightValue": "={{ $('查詢表單').item.json['縣市'] }}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        400
+      ],
+      "id": "806020bf-5d94-4187-98bd-8491e0c4497d",
+      "name": "過濾縣市"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "showText",
+        "responseText": "={{ $json.htmlList }}"
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        400
+      ],
+      "id": "256caa95-42df-4cc0-82a6-38d8b6e98058",
+      "name": "回傳結果",
+      "webhookId": "dc95f9c5-2342-4aa0-ab50-436845f79dc1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "記錄網址": {
+      "main": [
+        [
+          {
+            "node": "HTTP 取得上市CSV 檔",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP 取得上櫃CSV 檔",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP 取得上市CSV 檔": {
+      "main": [
+        [
+          {
+            "node": "讀出上市公司資料",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP 取得上櫃CSV 檔": {
+      "main": [
+        [
+          {
+            "node": "讀出上櫃公司資料",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "讀出上市公司資料": {
+      "main": [
+        [
+          {
+            "node": "分離資料(上市)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "讀出上櫃公司資料": {
+      "main": [
+        [
+          {
+            "node": "分離資料(上櫃)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "分離資料(上市)": {
+      "main": [
+        [
+          {
+            "node": "合併上市櫃資料",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "分離資料(上櫃)": {
+      "main": [
+        [
+          {
+            "node": "合併上市櫃資料",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "合併上市櫃資料": {
+      "main": [
+        [
+          {
+            "node": "過濾縣市",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "查詢表單": {
+      "main": [
+        [
+          {
+            "node": "記錄網址",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "轉換格式": {
+      "main": [
+        [
+          {
+            "node": "回傳結果",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "聚集列表": {
+      "main": [
+        [
+          {
+            "node": "轉換格式",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "過濾縣市": {
+      "main": [
+        [
+          {
+            "node": "聚集列表",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d68e8956-9d81-4531-97fd-1db24e21623e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f8196f72a77eaec846e7544ed8ad0504266351812ab50840c10d811baedfd63a"
+  },
+  "id": "7173ix1SMwGeWqBy",
+  "tags": [
+    {
+      "createdAt": "2025-06-13T05:43:57.643Z",
+      "updatedAt": "2025-06-13T05:43:57.643Z",
+      "id": "X6jJMO6OrhPeogZK",
+      "name": "教學影片"
+    },
+    {
+      "createdAt": "2025-07-03T07:11:16.210Z",
+      "updatedAt": "2025-07-03T07:11:16.210Z",
+      "id": "EpFLvUSPtDq7c5cC",
+      "name": "完成"
+    },
+    {
+      "createdAt": "2025-07-15T07:17:09.947Z",
+      "updatedAt": "2025-07-15T07:17:09.947Z",
+      "id": "nh9hSfuxityxJaUo",
+      "name": "學習"
+    }
+  ]
+}

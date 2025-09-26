@@ -1,0 +1,416 @@
+{
+  "name": "E06.流程控制(If,Switch)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 工作流名稱: 流程控制功能(If,Switch)\n### 流程說明: 說明流程分支控制功能。\n### 詳細內容:\n    1. 示範 If 流程分支控制。\n    2. 示範 Switch 流程分支控制。\n### 注意事項:",
+        "height": 240,
+        "width": 500,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1160,
+        -760
+      ],
+      "id": "460b45a0-0d25-433d-851f-cb402799ae34",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "上傳檔案",
+        "formDescription": "上傳一個檔案，並存放到伺服器。",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "file",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": "jpg, png, gif, pdf, txt"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "上傳",
+          "path": "upload_file",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "上傳完成！"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -540,
+        -620
+      ],
+      "id": "c9740a52-9f82-44be-ac79-c171fb72a7da",
+      "name": "檔案上載",
+      "webhookId": "d3ff227e-baea-4e65-aae9-bcfe61a3ff62"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e30ac217-7ffa-4786-a64b-4b8f99dbe16f",
+              "leftValue": "={{[\"image/jpeg\",\"image/png\",\"image/gif\"].includes($json.file.mimetype)}}",
+              "rightValue": "=",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -360,
+        -620
+      ],
+      "id": "22e40d09-5ea2-496e-8cc0-00c819506c31",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/Users/AI/n8n/upload_file/image/{{ $json.file.filename }}",
+        "dataPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        -760
+      ],
+      "id": "e48f6231-410a-4ea4-91a8-74e38da7e7fe",
+      "name": "寫入圖片目錄"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/Users/AI/n8n/upload_file/doc/{{ $json.file.filename }}",
+        "dataPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        -580
+      ],
+      "id": "0a2579da-e602-432f-88d3-33b7dba643ff",
+      "name": "寫入文件目錄"
+    },
+    {
+      "parameters": {
+        "formTitle": "上傳檔案",
+        "formDescription": "上傳一個檔案，並存放到伺服器。",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "file",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": "jpg, jpeg, png, gif, mp4,  mp3, wav, txt, pdf, doc",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "上傳",
+          "path": "upload_switch",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "上載完成！"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -540,
+        -240
+      ],
+      "id": "be445726-892f-438f-a9d8-c9604677c21f",
+      "name": "上載各種檔案",
+      "webhookId": "05e19a2b-e752-49a0-b98b-2b4910feec78"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/Users/AI/n8n/upload_file/image/{{ $json.file.filename }}",
+        "dataPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -380
+      ],
+      "id": "cda17eb9-75d0-4e35-bebe-fa5dc368d68f",
+      "name": "存到 image 目錄"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/Users/AI/n8n/upload_file/media/{{ $json.file.filename }}",
+        "dataPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -220
+      ],
+      "id": "fabce82d-c4f3-410b-a642-03762dffdcc3",
+      "name": "存到  media 目錄"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/Users/AI/n8n/upload_file/doc/{{ $json.file.filename }}",
+        "dataPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -40
+      ],
+      "id": "8eae4131-bc23-4fef-bb01-651d4c6a05ea",
+      "name": "存到  doc 目錄"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{[\"image/jpeg\",\"image/png\",\"image/gif\"]}}",
+                    "rightValue": "={{ $json.file.mimetype }}",
+                    "operator": {
+                      "type": "array",
+                      "operation": "contains",
+                      "rightType": "any"
+                    },
+                    "id": "36848a41-0c01-4922-a103-dea899a16f52"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ca13e60c-1dce-40a3-a6b7-787d89af014e",
+                    "leftValue": "={{[\"video/mp4\",\"audio/mpeg\",\"audio/wav\"]}}",
+                    "rightValue": "={{ $json.file.mimetype }}",
+                    "operator": {
+                      "type": "array",
+                      "operation": "contains",
+                      "rightType": "any"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "media"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4e554fbb-a74f-4703-b3fa-5ece0f3d3cef",
+                    "leftValue": "={{[\"text/plain\",\"application/pdf\",\"application/msword\"]}}",
+                    "rightValue": "={{ $json.file.mimetype }}",
+                    "operator": {
+                      "type": "array",
+                      "operation": "contains",
+                      "rightType": "any"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -320,
+        -240
+      ],
+      "id": "ad8c5712-7d6d-457a-9a6c-69a89ba95fb5",
+      "name": "switch"
+    },
+    {
+      "parameters": {
+        "content": "## Switch ",
+        "height": 80,
+        "width": 160,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -300
+      ],
+      "id": "b8a312c2-e020-485c-8697-72f8a561d841",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## If 判斷",
+        "height": 80,
+        "width": 160,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -580,
+        -740
+      ],
+      "id": "ff82bed1-cf64-43af-9698-89dbf30b27a4",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "檔案上載": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "寫入圖片目錄",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "寫入文件目錄",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "上載各種檔案": {
+      "main": [
+        [
+          {
+            "node": "switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "switch": {
+      "main": [
+        [
+          {
+            "node": "存到 image 目錄",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "存到  media 目錄",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "存到  doc 目錄",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "626e341a-776b-4e28-82b7-16d0d46716f1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5319f7ddebad67a3109b936b147dba84cc88bfa9470d2304e4761e96f82a7c70"
+  },
+  "id": "r3CAu3vpxmbjUUAd",
+  "tags": [
+    {
+      "createdAt": "2024-11-18T09:09:18.739Z",
+      "updatedAt": "2025-06-10T12:49:53.354Z",
+      "id": "rJVYb7OuI1JyNOJ4",
+      "name": "教學影片"
+    }
+  ]
+}
