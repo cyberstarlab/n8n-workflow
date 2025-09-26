@@ -1,0 +1,177 @@
+{
+  "name": "EP15.MCP Server",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 工作流名稱: MCP Server & Client Tools\n### 流程說明: \n   一、利用 MCP Server Trigger 執行 Tools。\n   二、用 MCP Client 串接 MCP Server trigger。\n   三、Clade Desktop 串接 n8n 的 mcp Server。\n  \n### 詳細內容: \n   一、MCP Server Trigger 提供計算機、MySQL 資料庫、Send Email 工具。\n   二、AI Agent 透過 MCP Client 產生報價寄給客戶。\n \n### 注意事項:\n",
+        "height": 332,
+        "width": 680,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -1712
+      ],
+      "id": "a891e725-0cf2-4472-ac85-5adeb58d82de",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## E15 用到的 Node\n## Server 端\n## MCP Server Trigger\n### Calculator\n### MySQL Tools\n### Send Email \n\n## Client 端\n### When chat message received\n### AI Agent\n### OpenAI Chat Model\n### Anthropic Chat Model\n## MCP Client\n### Structure output parser",
+        "height": 500,
+        "width": 380,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        368,
+        -1712
+      ],
+      "id": "f7c2b168-260b-45dc-b99b-9dc6dd161525",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('From_Email', ``, 'string') }}",
+        "toEmail": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Email', ``, 'string') }}",
+        "subject": "產品報價單",
+        "html": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('HTML', `各產品項目請用 HTML 表格列示。\n信件中請不要說明及顯示客戶的等級，如有折扣只需要說明享有幾折優惠。\n最後署名為 網際之星銷售團隊`, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSendTool",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        -1056
+      ],
+      "id": "b0367936-6b9b-4156-a8ef-07d0438e445c",
+      "name": "Send email in Send Email",
+      "webhookId": "aea6f9a9-1d7a-4a0e-99d2-eac2f4d8e0b9",
+      "credentials": {
+        "smtp": {
+          "id": "ue5X0EMig7BvYy2t",
+          "name": "SMTPaccount(gmail)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "quotation"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        -256,
+        -1312
+      ],
+      "id": "42107692-5c55-4fc4-a490-b6af18fea45a",
+      "name": "MCP Server Trigger",
+      "webhookId": "fab13c5f-6f14-4e7b-8e47-886f588a91d5",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "in4cePEX67f2DnoE",
+          "name": "Bearer Auth(MCP)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        -1056
+      ],
+      "id": "f3dd563c-f750-428a-bf71-9bb3b7bfb1ec",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "從 MySQL 查詢客戶基本資料或產品基本資料",
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Table', `table 說明如下:\ncustomer:客戶基本資料\nproduct:產品基本資料`, 'string') }}",
+          "mode": "name"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySqlTool",
+      "typeVersion": 2.5,
+      "position": [
+        -192,
+        -1040
+      ],
+      "id": "a6f1ceae-7e12-43a4-96ae-1a8a030cca41",
+      "name": "MySQL Tools",
+      "credentials": {
+        "mySql": {
+          "id": "IHkAP4j0cQNDZ4d1",
+          "name": "MySQL(local-n8n)"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Send email in Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ea135746-1190-4c36-92c9-e71fc5bc4994",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5319f7ddebad67a3109b936b147dba84cc88bfa9470d2304e4761e96f82a7c70"
+  },
+  "id": "7wWI8n315Lg4QUWy",
+  "tags": [
+    {
+      "createdAt": "2025-04-16T12:24:10.980Z",
+      "updatedAt": "2025-04-16T12:24:10.980Z",
+      "id": "6wpox6kVpMGOeqbo",
+      "name": "mcp"
+    }
+  ]
+}

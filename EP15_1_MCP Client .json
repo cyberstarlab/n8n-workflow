@@ -1,0 +1,265 @@
+{
+  "name": "EP15-1.MCP Client",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        -752
+      ],
+      "id": "17852add-0000-49bb-a165-2d570cab2c1a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "你是一個銷售助手，請幫我完成要求的報價工作:\n要求報價時，請查詢客戶基本資料及產品基本資料，最後整理出報價單。報價單的依據是將客戶要求的\n產品牌價(list price)*數量(count)=單項價格\n所有單項價格相加，即為總價(subtotal),但需要依據客戶的等級(level)計算最後的價格(total_price)，等級為 A 最後總價八折(*0.8),等級為 B 最後總價九折(*0.9),等級為 C 不打折(*1)\n請整理出最後的結果 Email 給客戶(不要在給客戶的 Email 中出現客戶等級的說明)。\n",
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        -1040
+      ],
+      "id": "1e063b3d-cdb4-445c-99a5-9f147a83dfe5",
+      "name": "AI Agent",
+      "executeOnce": false,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        -1040
+      ],
+      "id": "df65f455-9efc-4c9b-bc43-9eb8d0de85e0",
+      "name": "對話",
+      "webhookId": "8f19b164-acbb-4a66-9fec-a5cac7ad1c9d"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp/quotation",
+        "serverTransport": "httpStreamable",
+        "authentication": "bearerAuth",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.1,
+      "position": [
+        544,
+        -752
+      ],
+      "id": "657c4ad6-73a0-43b1-b5a1-d4c7a8c21312",
+      "name": "MCP Client",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "in4cePEX67f2DnoE",
+          "name": "Bearer Auth(MCP)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        -752
+      ],
+      "id": "ec9033b7-1493-464e-ab2b-34628ddb2773",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "P8NijAATf2sliKG4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-20250514",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        -768
+      ],
+      "id": "46946b69-fadf-40e3-889c-aee3243e3e7a",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "XSv69t1inh2eehbH",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 工作流名稱: MCP Server & Client Tools\n### 流程說明: \n   一、利用 MCP Server Trigger 執行 Tools。\n   二、用 MCP Client 串接 MCP Server trigger。\n   三、Clade Desktop 串接 n8n 的 mcp Server。\n  \n### 詳細內容: \n   一、MCP Server Trigger 提供計算機、MySQL 資料庫、Send Email 工具。\n   二、AI Agent 透過 MCP Client 產生報價寄給客戶。\n \n### 注意事項:\n",
+        "height": 332,
+        "width": 680,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -1472
+      ],
+      "id": "5eca447a-e7f1-4275-ae10-4a4c37adda6f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## E15 用到的 Node\n## Server 端\n## MCP Server Trigger\n### Calculator\n### MySQL Tools\n### Send Email \n\n## Client 端\n### When chat message received\n### AI Agent\n### OpenAI Chat Model\n### Anthropic Chat Model\n## MCP Client\n### Structure output parser",
+        "height": 500,
+        "width": 380,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        736,
+        -1472
+      ],
+      "id": "fdbdaeab-2fde-4621-9c4c-5f93984b7037",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"customer_id\": \"C0001\",\n\"customer_name\": \"A客戶\",\n\"email\":\"abc@cyberstar.com.tw\",\n\"level\":\"A\",\n  \"products\":[{\n  \"product_no\":\"P0001\",\n  \"product_name\":\"乖乖\",\n  \"list_price\":360,\n  \"count\":2,\n  \"uom\":\"箱\"\n  }],\n  \"subtotal\":\"720\",\n  \"total_price\":\"576\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        -768
+      ],
+      "id": "ef19108c-be2b-4e8b-be18-e10436aa7c07",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "對話": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "p3IQmYQOCp43gfmT",
+    "timezone": "Asia/Taipei"
+  },
+  "versionId": "2c40954f-a9bb-4e0c-9f97-e6a1e8f0973d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5319f7ddebad67a3109b936b147dba84cc88bfa9470d2304e4761e96f82a7c70"
+  },
+  "id": "C4VyRWeJpwIxYXbC",
+  "tags": [
+    {
+      "createdAt": "2025-04-16T12:24:10.980Z",
+      "updatedAt": "2025-04-16T12:24:10.980Z",
+      "id": "6wpox6kVpMGOeqbo",
+      "name": "mcp"
+    }
+  ]
+}
