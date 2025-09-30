@@ -37,7 +37,7 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 /*!40000 ALTER TABLE `customer` DISABLE KEYS */;
-INSERT INTO `customer` VALUES ('C0001','台雞店','A','jason@cyberstar.com.tw'),('C0002','蓮花科','B','jasontaiwan@hotmail.com'),('C0003','飛達','C','jason@cyberstar.com.tw');
+INSERT INTO `customer` VALUES ('C0001','台雞店','A','youreamil@address.com'),('C0002','蓮花科','B','youreamil@address.com'),('C0003','飛達','C','youreamil@address.com');
 /*!40000 ALTER TABLE `customer` ENABLE KEYS */;
 UNLOCK TABLES;
 
