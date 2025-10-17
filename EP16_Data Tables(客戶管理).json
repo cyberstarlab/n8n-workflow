@@ -1,0 +1,1043 @@
+{
+  "name": "EP16.Data Tables(客戶管理)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## E16 用到的 Node\n### on new n8n Form Event\n### Switch\n### Next form page\n### Form Ending\n## Data Table(Insert)\n## Data Table(Get)\n## Data Table(Delete)\n### Code",
+        "height": 336,
+        "width": 336,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -992
+      ],
+      "id": "39023499-380d-4823-a131-612c5bf122d7",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 工作流名稱: DataTable\n### 流程說明: 示範說明 DataTable 的使用。\n\n### 詳細內容:\n    1. 客戶基本資料管理，利用 DataTable 和 Form 的相關功能。\n    2. 匯入資料。\n    3. 新增、查詢、更新、刪除客戶基本資料。\n### 注意事項:\n",
+        "height": 340,
+        "width": 940,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        -992
+      ],
+      "id": "3d7a9cf4-4071-46b4-9ea7-35e1322dcbb9",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['選取功能'] }}",
+                    "rightValue": "=新增客戶",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "fbacbb2c-5e39-4479-ba13-63679bace8d7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cabe4651-41ed-4b35-b95f-d6dafe3f2692",
+                    "leftValue": "={{ $json['選取功能'] }}",
+                    "rightValue": "查詢客戶",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "inquiry"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "03df1072-3efd-41d3-8b3f-8e72d2e24730",
+                    "leftValue": "={{ $json['選取功能'] }}",
+                    "rightValue": "刪除客戶",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "delete"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -896,
+        128
+      ],
+      "id": "b52d18ee-a0fb-4a0f-b422-7e28c91b4b96",
+      "name": "切換不同作業流程"
+    },
+    {
+      "parameters": {
+        "formTitle": "客戶管理",
+        "formDescription": "客戶管理的各項功能",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "選取功能",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "新增客戶"
+                  },
+                  {
+                    "option": "查詢客戶"
+                  },
+                  {
+                    "option": "刪除客戶"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "選取",
+          "path": "customer"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -1104,
+        144
+      ],
+      "id": "19c7caef-8112-4e1c-81db-54bf7789f0a5",
+      "name": "選取客戶管理功能",
+      "webhookId": "99f790be-c426-45f4-8d2d-0094d59c6f3a"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "客戶編號",
+              "placeholder": "輸入客戶編號。",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "客戶名稱",
+              "placeholder": "輸入客戶名稱。",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "電話",
+              "placeholder": "輸入客戶電話。"
+            },
+            {
+              "fieldLabel": "地址",
+              "placeholder": "輸入客戶地址。"
+            },
+            {
+              "fieldLabel": "email",
+              "fieldType": "email",
+              "placeholder": "輸入客戶 email。"
+            }
+          ]
+        },
+        "options": {
+          "buttonLabel": "建立"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        -528,
+        -32
+      ],
+      "id": "c62fee2c-807c-4d35-b8c9-36c1edfb0a23",
+      "name": "客戶表單",
+      "webhookId": "f97d8d02-2b23-4a51-a2ae-6d2b6c79fe2d"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "uxtBAyZSt9Vqha7K",
+          "mode": "list",
+          "cachedResultName": "客戶",
+          "cachedResultUrl": "/projects/NyqBasyz5ghhSKvA/datatables/uxtBAyZSt9Vqha7K"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ $json['電話'] }}",
+            "address": "={{ $json['地址'] }}",
+            "email": "={{ $json.email }}",
+            "customer_name": "={{ $json['客戶名稱'] }}",
+            "customer_no": "={{ $json['客戶編號'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "customer_no",
+              "displayName": "customer_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        -32
+      ],
+      "id": "941cf2d0-7c26-4a27-a90c-dafc34a7da78",
+      "name": "建立客戶"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "完成客戶建立",
+        "completionMessage": "=完成：{{ $json.customer_name }} 客戶資料建立！",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        -192,
+        -32
+      ],
+      "id": "f6c5a33b-a6ff-45dd-9955-fd5019577b1c",
+      "name": "客戶建立完成",
+      "webhookId": "d8a10617-e900-4444-86c5-0fef1a17522e"
+    },
+    {
+      "parameters": {
+        "jsCode": "function escapeHtml(str) {\n  if (str === null || str === undefined) return '';\n  return String(str)\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;')\n    .replace(/'/g, '&#39;');\n}\n\nconst allInput = $input.all();\n\n// 將輸入 normalize 成陣列格式\nlet itemsArray = [];\nif (allInput.length === 1 && Array.isArray(allInput[0].json)) {\n  itemsArray = allInput[0].json;\n} else {\n  itemsArray = allInput.map(it => it.json);\n}\n\n\nlet html = ``;\n\nif (!itemsArray || itemsArray.length === 0) {\n  html += `<p>無資料可顯示。</p>`;\n} else {\n  html += `<table>\n    <thead>\n      <tr>\n        <th>客戶編號</th>\n        <th>客戶名稱</th>\n        <th>電話</th>\n        <th>電子郵件</th>\n        <th>地址</th>\n      </tr>\n    </thead>\n    <tbody>\n  `;\n  for (const it of itemsArray) {\n    const custNo = escapeHtml(it.customer_no);\n    const custName = escapeHtml(it.customer_name);\n    const phone = escapeHtml(it.phone);\n    const email = escapeHtml(it.email);\n    const address = escapeHtml(it.address);\n    html += `\n      <tr>\n        <td>${custNo}</td>\n        <td>${custName}</td>\n        <td>${phone}</td>\n        <td>${email}</td>\n        <td>${address}</td>\n      </tr>\n    `;\n  }\n  html += `\n    </tbody>\n  </table>\n  `;\n}\n\nhtml += `\n</body>\n</html>\n`;\n\n// 回傳一個 item，裡面有 html 欄位\nreturn [\n  {\n    json: {\n      html\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        144
+      ],
+      "id": "c1c014a2-7231-4028-af45-030f85e38f95",
+      "name": "轉換呈現樣式"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "查詢的客戶資料",
+        "completionMessage": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        192,
+        144
+      ],
+      "id": "4f3b84e6-b7a0-4d5e-83a2-2308c074bed4",
+      "name": "回應表單",
+      "webhookId": "c470cf0c-3ab2-45fe-8e5a-aab2e578b781"
+    },
+    {
+      "parameters": {
+        "defineForm": "json",
+        "jsonOutput": "=[\n   {\n      \"fieldLabel\":\"要刪除的客戶\",\n      \"fieldType\":\"dropdown\",\n      \"fieldOptions\":{\n          \"values\":{{ $('整理要刪除客戶選項').first().json.values }}},\n      \"requiredField\":true\n   }\n] ",
+        "options": {
+          "formTitle": "要刪除的客戶"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        176,
+        336
+      ],
+      "id": "45661617-aac6-471e-aa7d-0da1d5b68143",
+      "name": "選取要刪的客戶",
+      "webhookId": "41c195e6-3d7d-41b2-a1de-1ecc306b65dd",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "deleteRows",
+        "dataTableId": {
+          "__rl": true,
+          "value": "uxtBAyZSt9Vqha7K",
+          "mode": "list",
+          "cachedResultName": "客戶",
+          "cachedResultUrl": "/projects/NyqBasyz5ghhSKvA/datatables/uxtBAyZSt9Vqha7K"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "customer_name",
+              "keyValue": "={{ $json['要刪除的客戶'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        352,
+        336
+      ],
+      "id": "cb719404-473f-4b35-b300-4b516f9e6e1a",
+      "name": "刪除客戶"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "完成客戶刪除",
+        "completionMessage": "=完成：{{ $json.customer_name }} 資料刪除！",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        528,
+        336
+      ],
+      "id": "90db2188-cfd3-4304-8040-ba89ffcd8c8e",
+      "name": "客戶刪除完成",
+      "webhookId": "31e144cb-e805-4216-80e3-0bb4d540724c"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['listed-company'] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        -304
+      ],
+      "id": "6ec1ce20-3160-4359-b57a-4c18830cb88b",
+      "name": "HTTP 取得上市CSV 檔"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        -304
+      ],
+      "id": "28ebc1a5-b512-448b-9565-b455270a7e9e",
+      "name": "讀出上市公司資料"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "公司代號",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "公司名稱, 住址, 電子郵件信箱, 總機電話",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -304
+      ],
+      "id": "80773363-01cc-4bab-8276-caec325ba753",
+      "name": "分離資料(上市)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf3fad87-0263-44e6-b65d-193fbd49809e",
+              "name": "listed-company",
+              "value": "https://mopsfin.twse.com.tw/opendata/t187ap03_L.csv",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        -304
+      ],
+      "id": "28330aa5-d131-4d0a-bd1e-7ffb20d3492f",
+      "name": "記錄網址"
+    },
+    {
+      "parameters": {
+        "content": "## 資料匯入流程 \n",
+        "height": 288,
+        "width": 1376,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1152,
+        -416
+      ],
+      "id": "3c780b5e-a624-4055-8c2d-71542ddf8c5a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1088,
+        -304
+      ],
+      "id": "29d9d410-c388-4352-95ed-779a09a830ac",
+      "name": "點擊執行"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "uxtBAyZSt9Vqha7K",
+          "mode": "list",
+          "cachedResultName": "客戶",
+          "cachedResultUrl": "/projects/NyqBasyz5ghhSKvA/datatables/uxtBAyZSt9Vqha7K"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "customer_no": "={{ $json['公司代號'] }}",
+            "customer_name": "={{ $json['公司名稱'] }}",
+            "phone": "={{ $json['總機電話'] }}",
+            "email": "={{ $json['電子郵件信箱'] }}",
+            "address": "={{ $json['住址'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "customer_no",
+              "displayName": "customer_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -304
+      ],
+      "id": "6c28f878-d603-440a-8d9b-1209c0e80175",
+      "name": "插入資料"
+    },
+    {
+      "parameters": {
+        "content": "## 一次建立全部資料\n### 執行迅速,不用 loop \n",
+        "height": 80,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -400
+      ],
+      "id": "ed447ef7-d68d-4e18-972a-68b59e374170",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "選擇查詢條件",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "編號"
+                  },
+                  {
+                    "option": "名稱"
+                  },
+                  {
+                    "option": "地址"
+                  },
+                  {
+                    "option": "電話"
+                  },
+                  {
+                    "option": "email"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "包含文字",
+              "placeholder": "欄位內容或部份包含以下文字。如：地址包含\"高雄\"",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "buttonLabel": "查詢"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        -544,
+        336
+      ],
+      "id": "a067aad1-0079-4b63-8101-336c87467efa",
+      "name": "輸入刪除條件",
+      "webhookId": "38175404-9030-4aab-bfc8-b52ce2192e83"
+    },
+    {
+      "parameters": {
+        "jsCode": "const condition = $input.first().json['選擇查詢條件'];\nlet field_name=\"customer_name\";\nswitch(condition)\n  {\n    case \"編號\":\n      field_name=\"customer_no\";\n      break;\n    case \"名稱\":\n      field_name=\"customer_name\";\n      break;\n    case \"電話\":\n      field_name=\"phone\";\n      break;\n    case \"email\":\n      field_name=\"email\";\n      break;\n    case \"地址\":\n      field_name=\"address\";\n      break;\n  }\n\nreturn [{condition_field:field_name}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        336
+      ],
+      "id": "1cb8719d-d155-47f6-b220-8d4a8ecc4b58",
+      "name": "轉換刪除條件"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "uxtBAyZSt9Vqha7K",
+          "mode": "list",
+          "cachedResultName": "客戶",
+          "cachedResultUrl": "/projects/NyqBasyz5ghhSKvA/datatables/uxtBAyZSt9Vqha7K"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "={{ $json.condition_field }}",
+              "condition": "ilike",
+              "keyValue": "={{ $('輸入刪除條件').item.json['包含文字'] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        336
+      ],
+      "id": "fe6884f7-f3e6-4716-adbf-caa16032ef88",
+      "name": "查詢符合條件的刪除客戶"
+    },
+    {
+      "parameters": {
+        "jsCode": "const customers= $('查詢符合條件的刪除客戶').all();\n\nreturn [\n  {\n    json: {\n      values: customers.map(item => {\n        return { option: item.json.customer_name };\n      })\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        336
+      ],
+      "id": "3a3e0334-fcf2-4cd8-b5dc-e62e20f1a9c9",
+      "name": "整理要刪除客戶選項"
+    },
+    {
+      "parameters": {
+        "jsCode": "const condition = $input.first().json['選擇查詢條件'];\nlet field_name=\"customer_name\";\nswitch(condition)\n  {\n    case \"編號\":\n      field_name=\"customer_no\";\n      break;\n    case \"名稱\":\n      field_name=\"customer_name\";\n      break;\n    case \"電話\":\n      field_name=\"phone\";\n      break;\n    case \"email\":\n      field_name=\"email\";\n      break;\n    case \"地址\":\n      field_name=\"address\";\n      break;\n  }\n\nreturn [{condition_field:field_name}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        144
+      ],
+      "id": "55924cce-447f-4aa7-9d70-58bd718d3d85",
+      "name": "轉換查詢條件"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "uxtBAyZSt9Vqha7K",
+          "mode": "list",
+          "cachedResultName": "客戶",
+          "cachedResultUrl": "/projects/NyqBasyz5ghhSKvA/datatables/uxtBAyZSt9Vqha7K"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "={{ $json.condition_field }}",
+              "condition": "ilike",
+              "keyValue": "={{ $('輸入查詢條件').item.json['包含文字'] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        144
+      ],
+      "id": "5efebfc4-73f2-4b97-a3e8-de07fabab423",
+      "name": "查詢符合條件的客戶",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "選擇查詢條件",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "編號"
+                  },
+                  {
+                    "option": "名稱"
+                  },
+                  {
+                    "option": "地址"
+                  },
+                  {
+                    "option": "電話"
+                  },
+                  {
+                    "option": "email"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "包含文字",
+              "placeholder": "欄位內容或部份包含以下文字。如：地址包含\"高雄\"",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "buttonLabel": "查詢"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        -544,
+        144
+      ],
+      "id": "42c52dd0-d24a-4208-8bb9-21e568c73978",
+      "name": "輸入查詢條件",
+      "webhookId": "38175404-9030-4aab-bfc8-b52ce2192e83"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "切換不同作業流程": {
+      "main": [
+        [
+          {
+            "node": "客戶表單",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "輸入查詢條件",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "輸入刪除條件",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "選取客戶管理功能": {
+      "main": [
+        [
+          {
+            "node": "切換不同作業流程",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "客戶表單": {
+      "main": [
+        [
+          {
+            "node": "建立客戶",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "建立客戶": {
+      "main": [
+        [
+          {
+            "node": "客戶建立完成",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "轉換呈現樣式": {
+      "main": [
+        [
+          {
+            "node": "回應表單",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "選取要刪的客戶": {
+      "main": [
+        [
+          {
+            "node": "刪除客戶",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "刪除客戶": {
+      "main": [
+        [
+          {
+            "node": "客戶刪除完成",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP 取得上市CSV 檔": {
+      "main": [
+        [
+          {
+            "node": "讀出上市公司資料",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "讀出上市公司資料": {
+      "main": [
+        [
+          {
+            "node": "分離資料(上市)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "分離資料(上市)": {
+      "main": [
+        [
+          {
+            "node": "插入資料",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "記錄網址": {
+      "main": [
+        [
+          {
+            "node": "HTTP 取得上市CSV 檔",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "點擊執行": {
+      "main": [
+        [
+          {
+            "node": "記錄網址",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "輸入刪除條件": {
+      "main": [
+        [
+          {
+            "node": "轉換刪除條件",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "轉換刪除條件": {
+      "main": [
+        [
+          {
+            "node": "查詢符合條件的刪除客戶",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "查詢符合條件的刪除客戶": {
+      "main": [
+        [
+          {
+            "node": "整理要刪除客戶選項",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "整理要刪除客戶選項": {
+      "main": [
+        [
+          {
+            "node": "選取要刪的客戶",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "轉換查詢條件": {
+      "main": [
+        [
+          {
+            "node": "查詢符合條件的客戶",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "輸入查詢條件": {
+      "main": [
+        [
+          {
+            "node": "轉換查詢條件",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "查詢符合條件的客戶": {
+      "main": [
+        [
+          {
+            "node": "轉換呈現樣式",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0cefb02b-b0ce-448c-b9cd-93642ea84250",
+  "meta": {
+    "instanceId": "f8196f72a77eaec846e7544ed8ad0504266351812ab50840c10d811baedfd63a"
+  },
+  "id": "SxlthOSoxxdaH4zK",
+  "tags": []
+}
