@@ -1,0 +1,869 @@
+{
+  "name": "EP17.OpenAI名片管理",
+  "nodes": [
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.file_name }}",
+        "options": {
+          "dataPropertyName": "name_card_file"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        464,
+        384
+      ],
+      "id": "4386242a-66f0-4526-950a-a1d8e95270e7",
+      "name": "讀取檔案"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "19ef181c-868e-4037-b7c2-55b9646e149a",
+              "name": "file_type",
+              "value": "image",
+              "type": "string"
+            },
+            {
+              "id": "4e0782fa-7b9f-43ee-a265-c8d9b8dd4a37",
+              "name": "mine_type",
+              "value": "image/jpeg",
+              "type": "string"
+            },
+            {
+              "id": "97e5561b-486b-49cb-b47d-b18e0790aacc",
+              "name": "file_name",
+              "value": "/Users/Materials/IMG_5028.jpg",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        384
+      ],
+      "id": "df902897-3d4d-48a7-93a3-b1ff2c2e3f46",
+      "name": "設定型態",
+      "notes": "application/pdf\nimage/jpeg\nimage/png"
+    },
+    {
+      "parameters": {
+        "content": "## E17 用到的 Node\n### Manual Trigger\n### Edit Field\n### Read/Write file from disk\n### Google Drive Trigger\n### DataTable Insert row\n### On form submission\n### Local file trigger\n## Analyze Image(Open AI)\n### Code \n## Data Table(If row does not exist)\n### If\n### DataTable Insert row",
+        "height": 400,
+        "width": 416,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        960,
+        0
+      ],
+      "id": "88988776-b1d5-4a30-8a30-eaa134134eca",
+      "name": "Sticky Note1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## 工作流名稱: 名片辨識管理\n### 流程說明: 利用名片圖片，辨識內容，並且拆分不同橺位，存到 Data Table 中。\n\n### 詳細內容:\n    1. 從手機拍攝名片，並上傳到電腦指定目錄(或者由電腦上 Form 上傳檔案，或指定圖片檔路徑)。\n    2. 經由 AI 辨識後，將解析出來的名片內容存到指定的 Data Table 欄位中。\n    3. 如果資料已重複就在備註中加以說明。\n### 注意事項:\n    1.也可以改寫成存在資料庫，EXCEL 或 Google Sheet 中。\n",
+        "height": 340,
+        "width": 940,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "08d720f0-ccb5-47f5-bb59-c9edd3826081",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "Ffy1fnSlvKPlZzd6",
+          "mode": "list",
+          "cachedResultName": "E.名片",
+          "cachedResultUrl": "/projects/lDYZhzRsTVv6MtWt/datatables/Ffy1fnSlvKPlZzd6"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.name }}",
+            "name_eng": "={{ $json.name_eng }}",
+            "company": "={{ $json.company }}",
+            "company_eng": "={{ $json.company_eng }}",
+            "job_title": "={{ $json.job_title }}",
+            "web_site": "={{ $json.web_site }}",
+            "mobile": "={{ $json.mobile }}",
+            "telephone": "={{ $json.telephone }}",
+            "email": "={{ $json.email }}",
+            "address": "={{ $json.address }}",
+            "address_eng": "={{ $json.address_eng }}",
+            "remarks": "={{ $json.remarks }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "name_eng",
+              "displayName": "name_eng",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company_eng",
+              "displayName": "company_eng",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "job_title",
+              "displayName": "job_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "mobile",
+              "displayName": "mobile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "telephone",
+              "displayName": "telephone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "web_site",
+              "displayName": "web_site",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "address_eng",
+              "displayName": "address_eng",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "remarks",
+              "displayName": "remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        528
+      ],
+      "id": "9a40e3a4-5712-49d8-9ecf-8dc7840e8f2f",
+      "name": "插入一列資料"
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = [];\nconst items = $input.all();\nfor (const item of items) {\n  let raw = item.json.content;\n  // 去除 markdown 包裝 `````` 和前後空白\n  raw = raw.replace(/^``````$/m, '').trim();\n  // 還原反斜線 (如 \\\\\\\\n → \\n 和 \\\\\\\\ → \\\\)\n  raw = raw.replace(/\\\\\\\\n/g, '\\n').replace(/\\\\\\\\/g, '\\\\');\n  let obj;\n  try {\n    obj = JSON.parse(raw);\n  } catch (e) {\n    const match = raw.match(/\\{[\\s\\S]*\\}|\\[[\\s\\S]*\\]/);\n    if (match) try { obj = JSON.parse(match[0]); } catch (_) {}\n  }\n  out.push({ json: obj });\n}\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        544
+      ],
+      "id": "9258f803-ffc9-47c4-9419-589974c46870",
+      "name": "整理 JSON 格式"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "這個圖片是一張名片,請拆分出人員的相關資訊，轉換成JSON格式如下，如果資料中未提供此欄位，則保留空白；如果有多餘的未在下列欄位提供的資料則合併，以逗號分開放置於 remarks 欄位中:\n{\n\"name\": \"人員的姓名\",\n\"name_eng\": \"人員的英文名\",\n\"company\": \"公司名稱\",\n\"company_eng\": \"公司的英文名\",\n\"job_title\": \"職稱\",\n\"mobile\": \"手機號碼\",\n\"telephone\": \"電話\",\n\"web_site\": \"網址\",\n\"email\": \"郵件信箱\",\n\"address\": \"地址\",\n\"address_eng\": \"英文地址\",\n\"remarks\": \"備註\"\n}",
+        "inputType": "base64",
+        "binaryPropertyName": "name_card_file",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        640,
+        544
+      ],
+      "id": "9cefb607-7130-43f4-b45f-86e7a4f4d73e",
+      "name": "分析辨識圖片",
+      "credentials": {
+        "openAiApi": {
+          "id": "o4p7jK45FkkueVdI",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        112,
+        384
+      ],
+      "id": "80dbe528-2373-4b5e-a245-819fd04a1c35",
+      "name": "點擊執行"
+    },
+    {
+      "parameters": {
+        "formTitle": "上傳名片檔",
+        "formDescription": "用以上傳名片圖檔",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "name_card_file",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": "jpg, png",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "上傳",
+          "path": "name_card"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        112,
+        544
+      ],
+      "id": "fb6a5ac7-47bf-408b-88f8-9c5ee50475c2",
+      "name": "從表單傳送名片圖檔",
+      "webhookId": "7aeb445a-5534-496b-8077-d847ee5bb34c"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.path }}",
+        "options": {
+          "dataPropertyName": "name_card_file"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        368,
+        704
+      ],
+      "id": "ae3e5972-5243-4f6b-8137-68ae794c4172",
+      "name": "從本地讀取"
+    },
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "/Users/Materials/名片",
+        "events": [
+          "add"
+        ],
+        "options": {
+          "ignoreInitial": true
+        }
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        112,
+        704
+      ],
+      "id": "60f804c7-781c-4396-bbd0-fdaf7430dadf",
+      "name": "有檔案加入時"
+    },
+    {
+      "parameters": {
+        "operation": "rowNotExists",
+        "dataTableId": {
+          "__rl": true,
+          "value": "Ffy1fnSlvKPlZzd6",
+          "mode": "list",
+          "cachedResultName": "E.名片",
+          "cachedResultUrl": "/projects/lDYZhzRsTVv6MtWt/datatables/Ffy1fnSlvKPlZzd6"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "name",
+              "keyValue": "={{ $json.name }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        544
+      ],
+      "id": "f04d2ee2-173b-4c3b-8861-59da35bcbf8a",
+      "name": "中文同名不存在",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bfa676f2-baa6-470a-a3da-d0ab1d9fd854",
+              "leftValue": "={{ $json.isEmpty() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1232,
+        544
+      ],
+      "id": "388397a7-4489-4ffa-89ee-331585d5d36f",
+      "name": "資料非空"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "Ffy1fnSlvKPlZzd6",
+          "mode": "list",
+          "cachedResultName": "E.名片",
+          "cachedResultUrl": "/projects/lDYZhzRsTVv6MtWt/datatables/Ffy1fnSlvKPlZzd6"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $('整理 JSON 格式').item.json.name }}",
+            "name_eng": "={{ $('整理 JSON 格式').item.json.name_eng }}",
+            "company": "={{ $('整理 JSON 格式').item.json.company }}",
+            "company_eng": "={{ $('整理 JSON 格式').item.json.company_eng }}",
+            "job_title": "={{ $('整理 JSON 格式').item.json.job_title }}",
+            "web_site": "={{ $('整理 JSON 格式').item.json.web_site }}",
+            "mobile": "={{ $('整理 JSON 格式').item.json.mobile }}",
+            "telephone": "={{ $('整理 JSON 格式').item.json.telephone }}",
+            "email": "={{ $('整理 JSON 格式').item.json.email }}",
+            "address": "={{ $('整理 JSON 格式').item.json.address }}",
+            "address_eng": "={{ $('整理 JSON 格式').item.json.address_eng }}",
+            "remarks": "={{ '有同名同姓或資料已重複,'+$('整理 JSON 格式').item.json.remarks }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "name_eng",
+              "displayName": "name_eng",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company_eng",
+              "displayName": "company_eng",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "job_title",
+              "displayName": "job_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "mobile",
+              "displayName": "mobile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "telephone",
+              "displayName": "telephone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "web_site",
+              "displayName": "web_site",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "address_eng",
+              "displayName": "address_eng",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "remarks",
+              "displayName": "remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        704
+      ],
+      "id": "332cc131-e919-4751-ad5a-c909dce89eb8",
+      "name": "插入一列資料(備註資料可能重複)"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1-fP8ApKG3i_wCvMCwfpGFEF41dO7L9g0",
+          "mode": "list",
+          "cachedResultName": "N8N+RAG",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1-fP8ApKG3i_wCvMCwfpGFEF41dO7L9g0"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        112,
+        896
+      ],
+      "id": "3f187457-4768-4b62-b824-6d2f515c267e",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "CNHxQQKwbqdV1ZKw",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1-fP8ApKG3i_wCvMCwfpGFEF41dO7L9g0",
+          "mode": "list",
+          "cachedResultName": "N8N+RAG",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1-fP8ApKG3i_wCvMCwfpGFEF41dO7L9g0"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        112,
+        1088
+      ],
+      "id": "023dfa9d-c021-4a75-b8ca-09e90338fed0",
+      "name": "Google Drive Trigger1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "CNHxQQKwbqdV1ZKw",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "這個圖片是一張名片,請拆分出人員的相關資訊，轉換成JSON格式如下，如果資料中未提供此欄位，則保留空白；如果有多餘的未在下列欄位提供的資料則合併，以逗號分開放置於 remarks 欄位中:\n{\n\"name\": \"人員的姓名\",\n\"name_eng\": \"人員的英文名\",\n\"company\": \"公司名稱\",\n\"company_eng\": \"公司的英文名\",\n\"job_title\": \"職稱\",\n\"mobile\": \"手機號碼\",\n\"telephone\": \"電話\",\n\"web_site\": \"網址\",\n\"email\": \"郵件信箱\",\n\"address\": \"地址\",\n\"address_eng\": \"英文地址\",\n\"remarks\": \"備註\"\n}",
+        "imageUrls": "={{ $json.webContentLink }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        640,
+        896
+      ],
+      "id": "bceb597e-545f-42ac-a1fb-84ccc6772ee8",
+      "name": "分析辨識圖片1",
+      "credentials": {
+        "openAiApi": {
+          "id": "o4p7jK45FkkueVdI",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "讀取檔案": {
+      "main": [
+        [
+          {
+            "node": "分析辨識圖片",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "設定型態": {
+      "main": [
+        [
+          {
+            "node": "讀取檔案",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "整理 JSON 格式": {
+      "main": [
+        [
+          {
+            "node": "中文同名不存在",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "分析辨識圖片": {
+      "main": [
+        [
+          {
+            "node": "整理 JSON 格式",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "點擊執行": {
+      "main": [
+        [
+          {
+            "node": "設定型態",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "從表單傳送名片圖檔": {
+      "main": [
+        [
+          {
+            "node": "分析辨識圖片",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "從本地讀取": {
+      "main": [
+        [
+          {
+            "node": "分析辨識圖片",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "有檔案加入時": {
+      "main": [
+        [
+          {
+            "node": "從本地讀取",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "中文同名不存在": {
+      "main": [
+        [
+          {
+            "node": "資料非空",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "資料非空": {
+      "main": [
+        [
+          {
+            "node": "插入一列資料",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "插入一列資料(備註資料可能重複)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "分析辨識圖片1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger1": {
+      "main": [
+        [
+          {
+            "node": "分析辨識圖片1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "分析辨識圖片1": {
+      "main": [
+        [
+          {
+            "node": "整理 JSON 格式",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c60ff03d-190f-4c30-add5-c53185161adc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f8196f72a77eaec846e7544ed8ad0504266351812ab50840c10d811baedfd63a"
+  },
+  "id": "F9Vu2fas7jbdXeW1",
+  "tags": [
+    {
+      "createdAt": "2025-07-15T07:17:09.947Z",
+      "updatedAt": "2025-07-15T07:17:09.947Z",
+      "id": "nh9hSfuxityxJaUo",
+      "name": "學習"
+    }
+  ]
+}
