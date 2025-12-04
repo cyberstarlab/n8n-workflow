@@ -1,0 +1,916 @@
+{
+  "name": "打卡鐘 X Guardrails",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -640,
+        656
+      ],
+      "id": "a2d9eb70-da6e-4f35-a1c4-03c23ef07428",
+      "name": "When chat message received",
+      "webhookId": "5f624525-a63d-47d6-bc0b-7f8a3f4d1db1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [{\n    \"parts\":[{\"text\": {{ JSON.stringify($('隱藏敏感資訊').item.json.guardrailsInput) }}},{\"text\": \"僅提供滿足問題所需的資料即可，無須回應過多內容\"}]\n  }],\n  \"tools\": [{\n    \"file_search\": { \n      \"file_search_store_names\": [\"{{ $('Store Name1').item.json['File Search Store name'] }}\"]\n    }\n  }]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        528,
+        640
+      ],
+      "id": "a9ca27c5-f6f0-44f7-bf3c-f5f6e7d70382",
+      "name": "檢索 + 生成回答",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "xuImJMpVwsAjIceA",
+          "name": "Header Auth account"
+        },
+        "httpQueryAuth": {
+          "id": "Z9X6iWwGervu3jbO",
+          "name": "Query Auth account"
+        }
+      },
+      "notes": "{\n  \"contents\": [{\n    \"parts\":[{\"text\": {{ JSON.stringify($('隱藏敏感資訊').item.json.guardrailsInput) }}},{\"text\": \"僅提供滿足問題所需的資料即可，無須過度回應\"}]\n  }],\n  \"tools\": [{\n    \"file_search\": { \n      \"file_search_store_names\": [\"{{ $('Store Name1').item.json['File Search Store name'] }}\"]\n    }\n  }]\n}"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.guardrailsInput }}",
+        "guardrails": {
+          "jailbreak": {
+            "value": {
+              "threshold": 0.8
+            }
+          },
+          "nsfw": {
+            "value": {
+              "threshold": 0.8
+            }
+          },
+          "topicalAlignment": {
+            "value": {
+              "threshold": 0.9,
+              "prompt": "你是一位行動打卡鐘客服人員，專門回答以下主題相關的問題：\n- 產品方案差異與計費方案\n- App 功能與使用介紹\n- 公司背景與企業介紹\n\n【判斷原則】  \n1. 直接關於產品方案、計費、App介紹、公司介紹的問題，回答時應聚焦相關資訊。  \n2. 如涉及其他與行動打卡鐘不相關的問題（例如政治、法律、食物、產品外的服務等），則應拒絕回答。  \n3. 不得回應任何不合適、非相關或敏感話題。  \n4. 只要有不合適的內容，全部拒絕回答。\n\n請嚴格遵守以上規則，確保回答內容始終在允許範圍內。  "
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.guardrails",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        656
+      ],
+      "id": "6be26daa-850e-41f3-b0d4-df0c8f5e2018",
+      "name": "檢查使用者問題",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.mergedText }}",
+        "guardrails": {
+          "topicalAlignment": {
+            "value": {
+              "threshold": 0.9,
+              "prompt": "你是一位行動打卡鐘客服人員，專門回答以下主題相關的問題：\n- 產品方案差異與計費方案\n- App 功能與使用介紹\n- 公司背景與企業介紹\n\n【判斷原則】  \n1. 直接關於產品方案、計費、App介紹、公司介紹的問題，回答時應聚焦相關資訊。  \n2. 如涉及其他與行動打卡鐘不相關的問題（例如政治、法律、食物、產品外的服務等），則應拒絕回答。  \n3. 不得回應任何不合適、非相關或敏感話題。  \n4. 只要有不合適的內容，全部拒絕回答。\n\n請嚴格遵守以上規則，確保回答內容始終在允許範圍內。  "
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.guardrails",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        640
+      ],
+      "id": "2934c75f-0def-4d30-b87c-5b1ac086a0df",
+      "name": "檢查生成回答"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        832
+      ],
+      "id": "72398ad7-61eb-47e3-92d4-999560c5ed35",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "6FhjDPy9aUNMIE2L",
+          "name": "公司 OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8f7ff76-29f5-4877-bb4f-5375bab832d5",
+              "name": "output",
+              "value": "={{ $('合併分段內容').item.json.mergedText }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1472,
+        624
+      ],
+      "id": "3ab5157e-6d3c-4240-a6ef-d8de9cc1213f",
+      "name": "輸出"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1088,
+        816
+      ],
+      "id": "f55c7380-6e65-458f-806d-11b2f5d48aed",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "6FhjDPy9aUNMIE2L",
+          "name": "公司 OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# 隱藏敏感資訊\n### 將身分證、電話、信箱、密鑰等內容覆蓋",
+        "height": 288,
+        "width": 320,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        544
+      ],
+      "id": "b9776534-a8af-4323-bfac-7117f8b82b9a",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('宣告檔案至 File Search Store').first().json.headers['x-goog-upload-url'] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "upload, finalize"
+            },
+            {
+              "name": "X-Goog-Upload-Offset",
+              "value": "0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "={{ $('從表單上傳檔案').first().binary[ $('Loop Over Items').item.json.fileIndex ] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        544,
+        112
+      ],
+      "id": "6e5a9310-7dd5-4f94-961e-9d1637689b4f",
+      "name": "實際上傳檔案"
+    },
+    {
+      "parameters": {
+        "formTitle": "上傳參考檔案",
+        "formDescription": "要上傳到 File Search Stores 的檔案",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "file",
+              "fieldType": "file",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "上傳",
+          "path": "name_card"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -656,
+        96
+      ],
+      "id": "3a8c5c7f-ca05-44da-a496-6a9da96f93a1",
+      "name": "從表單上傳檔案",
+      "webhookId": "7aeb445a-5534-496b-8077-d847ee5bb34c"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/upload/v1beta/{{ $('Store Name').item.json['File Search Store name'] }}:uploadToFileSearchStore",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Upload-Protocol",
+              "value": "resumable"
+            },
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "start"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Length",
+              "value": "={{ $('Loop Over Items').item.json.size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Type",
+              "value": "={{ $('Loop Over Items').item.json.mimetype }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        336,
+        112
+      ],
+      "id": "c630c96c-e546-4417-9beb-ffbd8516727e",
+      "name": "宣告檔案至 File Search Store",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "Z9X6iWwGervu3jbO",
+          "name": "Query Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        96
+      ],
+      "id": "5322e861-bacb-4e4c-be5d-ad20106c7429",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -64,
+        96
+      ],
+      "id": "eccf7fa8-54b1-48ff-ac6d-173926dd9f34",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/fileSearchStores",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "displayName",
+              "value": "mobile_clock"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -480,
+        -304
+      ],
+      "id": "9e4d4190-5aae-464d-97ce-b732fb964275",
+      "name": "建立 File Search Store",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "Z9X6iWwGervu3jbO",
+          "name": "Query Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 上傳檔案到 File Search Store\n根據剛剛取得的 name 上傳到指定 File Search Store",
+        "height": 256,
+        "width": 432
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        272,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "b446b69c-c5d3-45ce-97d3-8b5fc9f9bfb8",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        -304
+      ],
+      "id": "900ed8df-15c1-4f22-9afd-21558a1adfe7",
+      "name": "點擊執行"
+    },
+    {
+      "parameters": {
+        "content": "# 第一步  取得 File Search Store name\n## 要填入節點 **宣告檔案至 File Search Store** 以及 **檢索 + 生成回答**",
+        "height": 352,
+        "width": 704,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        -464
+      ],
+      "typeVersion": 1,
+      "id": "e0180973-6b7f-47a0-87de-61294ebbe510",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## 將 Form 上傳的檔案分割\n準備個別上傳至 File Search Stroe",
+        "height": 256,
+        "width": 368
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -512,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "e8485135-5b1f-4bff-9959-822f6032a6ff",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// input: $json.content.parts (Array of {text: ...})\nconst outputText = $json.candidates[0].content.parts.map(part => part.text).join(\"\\n\\n\");\nreturn [{ json: { mergedText: outputText } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        640
+      ],
+      "id": "9b16e4ae-0b75-466f-bc16-ba7ad9b3792d",
+      "name": "合併分段內容"
+    },
+    {
+      "parameters": {
+        "content": "# 取得FileSearchAPI回答\n### 指定 File Search Stores' name 就可以參考先前上傳的檔案回答",
+        "height": 288,
+        "width": 512
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        544
+      ],
+      "typeVersion": 1,
+      "id": "91f0f6b6-bffb-4201-9047-424d277066be",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "# 檢查問題是否合理\n",
+        "height": 288,
+        "width": 320,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        544
+      ],
+      "id": "8d6fb0d5-1d15-4eef-828c-c1bcfba3cfc9",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "# 檢查回答是否合理\n",
+        "height": 288,
+        "width": 320,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        544
+      ],
+      "id": "68f2b5fb-ca7c-4a58-81bf-a66b7da8b038",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# 檢查失敗",
+        "height": 208,
+        "width": 192,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        768
+      ],
+      "id": "b54e375d-77d3-4318-a62f-f9b6a3181944",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "49bedde8-072d-4a9a-aad8-94bbae8d3dcf",
+              "name": "output",
+              "value": "偵測到不合理的輸入或意圖，請重新整理問題後再次詢問",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1472,
+        832
+      ],
+      "id": "ed78e5fa-766d-4e7a-aae6-9dbdc624e536",
+      "name": "檢查失敗回應"
+    },
+    {
+      "parameters": {
+        "operation": "sanitize",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "guardrails": {
+          "pii": {
+            "value": {
+              "type": "all"
+            }
+          },
+          "secretKeys": {
+            "value": {
+              "permissiveness": "balanced"
+            }
+          },
+          "urls": {
+            "value": {
+              "allowedUrls": ""
+            }
+          },
+          "customRegex": {
+            "regex": [
+              {
+                "name": "台灣地址",
+                "value": "(?:臺北市|新北市|桃園市|臺中市|臺南市|高雄市|基隆市|新竹市|嘉義市|宜蘭縣|新竹縣|苗栗縣|彰化縣|南投縣|雲林縣|嘉義縣|屏東縣|臺東縣|花蓮縣|澎湖縣|金門縣|連江縣)\\s*[\\u4e00-\\u9fff]+(?:區|鄉|鎮|市)\\s*[\\u4e00-\\u9fff]+(?:路|街|巷|弄|段)\\s*\\d+號\\s*(?:\\d+[A-Za-z]?F?-\\d+)?(?:[\\d]+[樓F室]?(?:-[\\d]+)?)?"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.guardrails",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        656
+      ],
+      "id": "6091dcd9-c4a1-4550-a4e0-af468d85573b",
+      "name": "隱藏敏感資訊",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "content": "# 第二步 上傳檔案至File Search Store\n",
+        "height": 432,
+        "width": 1488,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "1bfda6ef-d237-447d-b8cf-06dfdf1557fa",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "# 第三步 Guardrails檢查參考File Search Store資料進行問答",
+        "height": 576,
+        "width": 2416,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "507a19dd-6c57-4d81-b934-d2478fa9bacf",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "# 合併內容\n",
+        "height": 288,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        544
+      ],
+      "id": "caf8b233-399b-4ba1-b6c8-df45b01502d4",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "# 第零步 \n# 將 n8n 更新至 1.119.0 或以上版本\n# 準備Google AI Studio API Key",
+        "height": 208,
+        "width": 672,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        -704
+      ],
+      "typeVersion": 1,
+      "id": "c2278754-42df-4cd3-a9de-0c4570a94d68",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Add a new field called 'fileIndex' to the JSON of the item only if multiple files\n\n// 獲得表單上傳數量\nconst fileCount = $('從表單上傳檔案').item.json.file.length;\n\n// 增加fileIndex \nif (fileCount > 1) {  \n  // 如果上傳多個檔案，增加後綴以符合表單上傳規則\n  $input.item.json.fileIndex = 'file_' + $itemIndex;\n} else{  \n  // 只有一個檔案就不需要後綴\n  $input.item.json.fileIndex = 'file';  \n}\n\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        96
+      ],
+      "id": "81045c26-5510-4626-b9ac-6df6a6b6bc72",
+      "name": "Add File Index"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "87933bbd-f5b8-45f9-9387-13feb64e3331",
+              "name": "File Search Store name",
+              "value": "fileSearchStores/mobileclock-urkrqqxzzr6v",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        112
+      ],
+      "id": "6584083f-f72e-4d8a-8d12-03a4f5bc399a",
+      "name": "Store Name"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "87933bbd-f5b8-45f9-9387-13feb64e3331",
+              "name": "File Search Store name",
+              "value": "fileSearchStores/mobileclock-urkrqqxzzr6v",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        640
+      ],
+      "id": "e4796072-517c-42d1-8dcb-5a6774a49794",
+      "name": "Store Name1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "隱藏敏感資訊",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "檢索 + 生成回答": {
+      "main": [
+        [
+          {
+            "node": "合併分段內容",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "檢查使用者問題": {
+      "main": [
+        [
+          {
+            "node": "Store Name1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "檢查失敗回應",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "檢查使用者問題",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "檢查生成回答": {
+      "main": [
+        [
+          {
+            "node": "輸出",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "檢查失敗回應",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "檢查生成回答",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "實際上傳檔案": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "從表單上傳檔案": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "宣告檔案至 File Search Store": {
+      "main": [
+        [
+          {
+            "node": "實際上傳檔案",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Add File Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Store Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "點擊執行": {
+      "main": [
+        [
+          {
+            "node": "建立 File Search Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "合併分段內容": {
+      "main": [
+        [
+          {
+            "node": "檢查生成回答",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "隱藏敏感資訊": {
+      "main": [
+        [
+          {
+            "node": "檢查使用者問題",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add File Index": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Name": {
+      "main": [
+        [
+          {
+            "node": "宣告檔案至 File Search Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Name1": {
+      "main": [
+        [
+          {
+            "node": "檢索 + 生成回答",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "90fc8857-9063-43f8-86d2-e0f2470f6eef",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "484e7739d46254010c5bd0f46358475e644822fb51ee508877634c0bd0a3e098"
+  },
+  "id": "wlRrD3OpAHkwODFN",
+  "tags": [
+    {
+      "updatedAt": "2025-11-17T06:32:08.095Z",
+      "createdAt": "2025-11-17T06:32:08.095Z",
+      "id": "Rk0NtbggTXEcY08p",
+      "name": "打卡鐘"
+    },
+    {
+      "updatedAt": "2025-04-28T07:51:09.033Z",
+      "createdAt": "2025-04-28T07:51:09.033Z",
+      "id": "a8r5RDcJemIF7qdv",
+      "name": "完成"
+    }
+  ]
+}
